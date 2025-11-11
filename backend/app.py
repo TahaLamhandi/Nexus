@@ -80,21 +80,46 @@ CSV_PATH_SAMPLE = os.path.join(os.path.dirname(__file__), 'jobs_sample.csv')
 CSV_CLOUD_URL = os.getenv('JOB_CSV_URL', None)  # Set this in Koyeb environment variables
 
 def download_csv_from_cloud(url, local_path):
-    """Download CSV from cloud storage URL"""
+    """Download CSV from cloud storage URL (handles Google Drive large files)"""
     try:
         import requests
         print(f"📥 Downloading CSV from cloud storage...")
-        response = requests.get(url, stream=True)
+        
+        # For Google Drive, we need to handle the virus scan warning for large files
+        session = requests.Session()
+        response = session.get(url, stream=True)
+        
+        # Check if this is the virus scan warning page
+        if 'drive.google.com' in url and response.status_code == 200:
+            # Look for the confirm token in the response
+            if 'virus scan warning' in response.text.lower():
+                print("⚠️ Google Drive virus scan detected, extracting confirm token...")
+                # Extract file ID and use usercontent domain with confirm=t
+                file_id = url.split('id=')[1].split('&')[0] if 'id=' in url else None
+                if file_id:
+                    download_url = f"https://drive.usercontent.google.com/download?id={file_id}&export=download&confirm=t"
+                    print(f"🔄 Retrying with confirm token...")
+                    response = session.get(download_url, stream=True)
+        
         response.raise_for_status()
         
+        # Download the file
+        total_size = 0
         with open(local_path, 'wb') as f:
-            for chunk in response.iter_content(chunk_size=8192):
-                f.write(chunk)
+            for chunk in response.iter_content(chunk_size=8192*128):  # 1MB chunks
+                if chunk:
+                    f.write(chunk)
+                    total_size += len(chunk)
+                    # Print progress every 100MB
+                    if total_size % (100 * 1024 * 1024) == 0:
+                        print(f"📊 Downloaded {total_size / (1024*1024):.0f} MB...")
         
-        print(f"✅ Downloaded CSV to {local_path}")
+        print(f"✅ Downloaded {total_size / (1024*1024):.2f} MB to {local_path}")
         return True
     except Exception as e:
         print(f"❌ Failed to download CSV: {e}")
+        import traceback
+        traceback.print_exc()
         return False
 
 def load_jobs_dataset():
