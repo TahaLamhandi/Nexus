@@ -1,0 +1,48 @@
+# Node modules and build files
+node_modules
+dist
+build
+.vite
+
+# Python cache
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.so
+
+# Environment
+.env
+.env.local
+.env.production
+
+# Git
+.git
+.gitignore
+
+# IDE
+.vscode
+.idea
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Documentation
+*.md
+!README.md
+
+# Frontend source (we only need backend)
+src/
+public/
+index.html
+vite.config.js
+eslint.config.js
+package.json
+package-lock.json
+
+# Large data files
+*.csv
+*.pkl
+*.joblib
