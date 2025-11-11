@@ -24,6 +24,7 @@ import Loader from '../components/Loader';
 import CoverLetterGenerator from '../components/CoverLetterGenerator';
 import { getTechIcon, detectTechnologies } from '../utils/techIcons';
 import { extractFeatures, predictJobMatches } from '../utils/lwrPredictor';
+import API_URL from '../config/api';
 
 const ResultsDashboard = () => {
   const location = useLocation();
@@ -55,11 +56,12 @@ const ResultsDashboard = () => {
         setIsLoadingJobs(true);
         setJobsError(null);
         
-        console.log('� Connecting to FastAPI backend (sklearn)...');
+        console.log('🔗 Connecting to FastAPI backend (sklearn)...');
+        console.log('🌐 API URL:', API_URL);
         console.log('📊 CV Data:', cvData);
         
         // Call FastAPI backend API
-        const response = await fetch('http://localhost:8000/api/predict-jobs', {
+        const response = await fetch(`${API_URL}/api/predict-jobs`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
