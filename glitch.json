@@ -1,0 +1,19 @@
+{
+  "install": "cd backend && pip install -r requirements.txt",
+  "start": "cd backend && uvicorn app:app --host 0.0.0.0 --port 8000",
+  "watch": {
+    "ignore": [
+      "\\.pyc$"
+    ],
+    "install": {
+      "include": [
+        "^backend/requirements\\.txt$"
+      ]
+    },
+    "restart": {
+      "include": [
+        "^backend/.*\\.py$"
+      ]
+    }
+  }
+}
