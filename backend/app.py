@@ -20,18 +20,11 @@ app = FastAPI(
 )
 
 # Enable CORS for React frontend
+# Temporarily allow all origins for testing, then lock down to specific domains
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "http://localhost:5173",
-        "http://localhost:5174", 
-        "http://localhost:5175",
-        "http://localhost:3000",
-        "https://hissing-pierette-1tahaaaaa1-fff858c6.koyeb.app",
-        "https://*.vercel.app",
-        "https://*.koyeb.app"
-    ],
-    allow_credentials=True,
+    allow_origins=["*"],  # Allow all origins temporarily
+    allow_credentials=False,  # Must be False when allow_origins is "*"
     allow_methods=["*"],
     allow_headers=["*"],
 )
