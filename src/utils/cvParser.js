@@ -970,17 +970,65 @@ const extractProjects = (text) => {
     console.log('🔄 No projects found with ➢ format. Trying alternative formats...');
     
     // Look for projects in the section after "Projects" header
+    let currentProj = null;
+    
     for (let i = projectSectionStart + 1; i < searchLines.length; i++) {
       const line = searchLines[i].trim();
       const lowerLine = line.toLowerCase();
       
-      // Stop at next major section (including "EXPERIENCES & INTERNSHIPS")
-      if ((lowerLine.match(/^(expérience|experience|éducation|education|compétences|skills|langues|languages|certifications?|formation)/i) &&
+      // Stop at next major section (including "EXPERIENCES & INTERNSHIPS" and "COMP")
+      if ((lowerLine.match(/^(expérience|experience|éducation|education|compétences|comp|skills|langues|languages|certifications?|formation)/i) &&
           line.length < 40) ||
-          line.match(/^(EXPERIENCES|EXPÉRIENCES|EDUCATION|SKILLS|FORMATION)/i) ||
+          line.match(/^(EXPERIENCES|EXPÉRIENCES|EDUCATION|SKILLS|FORMATION|COMP)/i) ||
           lowerLine.includes('experiences') && lowerLine.includes('internship')) {
         console.log(`🛑 Reached next section: ${line}`);
+        // Save current project before breaking
+        if (currentProj && currentProj.name) {
+          projects.push(currentProj);
+          console.log(`✅ Added project before section end: "${currentProj.name}"`);
+        }
         break;
+      }
+      
+      // NEW PATTERN: Bullet points with project title and technologies on SAME line
+      // Format: "Project Title   Tech1, Tech2, Tech3"
+      // Examples from Oussama's CV:
+      //   "Plateforme microservices de gestion et réservation de billets avec CI/CD   Spring Boot, Docker, Kubernetes,"
+      //   "Assistant d'apprentissage IA Cloud-Native (basé sur RAG)   Spring Boot, React.js, ChromaDB, Docker, Azure"
+      if (line.match(/^[A-ZÀ-Ÿ].{20,150}\s{2,}.+,\s*.+/)) {
+        console.log(`🎯 Found bullet project (title + tech on same line): "${line.substring(0, 80)}..."`);
+        
+        // Split by multiple spaces (usually 2-4 spaces separate title from tech)
+        const parts = line.split(/\s{2,}/);
+        if (parts.length >= 2) {
+          const projectTitle = parts[0].trim();
+          const techStack = parts.slice(1).join(' ').trim();
+          
+          console.log(`   📝 Title: "${projectTitle}"`);
+          console.log(`   🔧 Technologies: "${techStack}"`);
+          
+          // Save previous project if exists
+          if (currentProj && currentProj.name) {
+            projects.push(currentProj);
+            console.log(`✅ Added previous project: "${currentProj.name}"`);
+          }
+          
+          // Create new project
+          currentProj = {
+            name: projectTitle,
+            description: [],
+            technologies: techStack ? techStack.split(',').map(t => t.trim()).filter(t => t.length > 0) : []
+          };
+          continue;
+        }
+      }
+      
+      // If we have a current project and this is a bullet description line
+      if (currentProj && line.startsWith('•') && line.length > 15) {
+        const descText = line.replace(/^•\s*/, '').trim();
+        currentProj.description.push(descText);
+        console.log(`   📄 Added description: "${descText.substring(0, 60)}..."`);
+        continue;
       }
       
       // Pattern: Bullet points (-, •, *) - but only if they look like project descriptions
