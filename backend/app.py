@@ -186,6 +186,10 @@ async def predict_jobs(request: PredictJobsRequest):
         print(f"Projects: {len(cv_data.get('projects', []))} detected")
         print(f"Requesting top {top_k} matches")
         
+        # Debug: Print CV data structure
+        print(f"📋 CV Data Keys: {list(cv_data.keys())}")
+        print(f"📋 CV Skills: {cv_data.get('skills', [])}")
+        
         # Extract country from CV (check contact info, location, etc.)
         cv_country = None
         contact = cv_data.get('contact', {})
@@ -315,10 +319,16 @@ async def predict_jobs(request: PredictJobsRequest):
         raise HTTPException(status_code=404, detail="Job descriptions dataset not found")
         
     except Exception as e:
-        print(f"❌ Error in predict_jobs: {str(e)}")
+        error_msg = f"Error in predict_jobs: {str(e)}"
+        print(f"❌ {error_msg}")
         import traceback
+        print("📋 Full traceback:")
         traceback.print_exc()
-        raise HTTPException(status_code=500, detail=str(e))
+        # Return detailed error for debugging
+        raise HTTPException(
+            status_code=500, 
+            detail=f"{error_msg} | Type: {type(e).__name__}"
+        )
 
 @app.post('/api/cv-analysis', response_model=CVAnalysisResponse)
 async def analyze_cv(request: CVAnalysisRequest):
