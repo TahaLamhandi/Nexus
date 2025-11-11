@@ -22,7 +22,15 @@ app = FastAPI(
 # Enable CORS for React frontend
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173", "http://localhost:5174", "http://localhost:5175", "http://localhost:3000"],
+    allow_origins=[
+        "http://localhost:5173",
+        "http://localhost:5174", 
+        "http://localhost:5175",
+        "http://localhost:3000",
+        "https://hissing-pierette-1tahaaaaa1-fff858c6.koyeb.app",
+        "https://*.vercel.app",
+        "https://*.koyeb.app"
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
