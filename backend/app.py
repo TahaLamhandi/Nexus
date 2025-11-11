@@ -71,13 +71,47 @@ class HealthResponse(BaseModel):
 # 🔧 DATA & CONFIGURATION
 # ==========================================
 
-# Try to load large CSV first, fallback to sample data
+# CSV Loading Configuration
+# Option 1: Local file (for large dataset)
 CSV_PATH_LARGE = os.path.join(os.path.dirname(__file__), '..', 'public', 'job_descriptions.csv')
+# Option 2: Sample file (for demo/testing)
 CSV_PATH_SAMPLE = os.path.join(os.path.dirname(__file__), 'jobs_sample.csv')
+# Option 3: Cloud storage URL (recommended for production)
+CSV_CLOUD_URL = os.getenv('JOB_CSV_URL', None)  # Set this in Koyeb environment variables
+
+def download_csv_from_cloud(url, local_path):
+    """Download CSV from cloud storage URL"""
+    try:
+        import requests
+        print(f"📥 Downloading CSV from cloud storage...")
+        response = requests.get(url, stream=True)
+        response.raise_for_status()
+        
+        with open(local_path, 'wb') as f:
+            for chunk in response.iter_content(chunk_size=8192):
+                f.write(chunk)
+        
+        print(f"✅ Downloaded CSV to {local_path}")
+        return True
+    except Exception as e:
+        print(f"❌ Failed to download CSV: {e}")
+        return False
 
 def load_jobs_dataset():
     """Load and return the jobs dataset"""
-    # Try large CSV first
+    # Try cloud storage first (if URL is configured)
+    if CSV_CLOUD_URL:
+        cloud_cache_path = '/tmp/job_descriptions.csv'
+        if not os.path.exists(cloud_cache_path):
+            if download_csv_from_cloud(CSV_CLOUD_URL, cloud_cache_path):
+                try:
+                    df = pd.read_csv(cloud_cache_path, encoding='utf-8', on_bad_lines='skip')
+                    print(f"✅ Loaded {len(df)} jobs from cloud storage")
+                    return df
+                except Exception as e:
+                    print(f"⚠️ Could not load cloud CSV: {e}")
+    
+    # Try large local CSV
     if os.path.exists(CSV_PATH_LARGE):
         try:
             df = pd.read_csv(CSV_PATH_LARGE, encoding='utf-8', on_bad_lines='skip')
