@@ -71,24 +71,29 @@ class HealthResponse(BaseModel):
 # 🔧 DATA & CONFIGURATION
 # ==========================================
 
-# Load job descriptions dataset
-CSV_PATH = os.path.join(os.path.dirname(__file__), '..', 'public', 'job_descriptions.csv')
+# Try to load large CSV first, fallback to sample data
+CSV_PATH_LARGE = os.path.join(os.path.dirname(__file__), '..', 'public', 'job_descriptions.csv')
+CSV_PATH_SAMPLE = os.path.join(os.path.dirname(__file__), 'jobs_sample.csv')
 
 def load_jobs_dataset():
     """Load and return the jobs dataset"""
+    # Try large CSV first
+    if os.path.exists(CSV_PATH_LARGE):
+        try:
+            df = pd.read_csv(CSV_PATH_LARGE, encoding='utf-8', on_bad_lines='skip')
+            print(f"✅ Loaded {len(df)} jobs from large CSV")
+            return df
+        except Exception as e:
+            print(f"⚠️ Could not load large CSV: {e}")
+    
+    # Fallback to sample CSV
     try:
-        df = pd.read_csv(CSV_PATH, encoding='utf-8', on_bad_lines='skip')
-        print(f"✅ Loaded {len(df)} jobs from CSV")
+        df = pd.read_csv(CSV_PATH_SAMPLE, encoding='utf-8')
+        print(f"✅ Loaded {len(df)} jobs from sample CSV (demo mode)")
         return df
     except Exception as e:
-        print(f"❌ Error loading CSV: {e}")
-        # Try with different encoding
-        try:
-            df = pd.read_csv(CSV_PATH, encoding='latin-1', on_bad_lines='skip')
-            print(f"✅ Loaded {len(df)} jobs from CSV (latin-1 encoding)")
-            return df
-        except:
-            return pd.DataFrame()
+        print(f"❌ Error loading sample CSV: {e}")
+        return pd.DataFrame()
 
 # Skills taxonomy
 SKILLS_LIST = [

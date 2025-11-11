@@ -1,0 +1,9 @@
+Job_Title,Company,Company_Logo,Location,Work_Type,Experience_Level,LinkedIn_URL,Job Description,Country,Salary Range
+Software Engineer,Google,https://logo.clearbit.com/google.com,Mountain View CA,Full-time,Mid-Level,https://linkedin.com/jobs/1,Design and develop scalable software solutions using Python Java and cloud technologies,United States,$120000-$180000
+Full Stack Developer,Meta,https://logo.clearbit.com/meta.com,Menlo Park CA,Full-time,Senior,https://linkedin.com/jobs/2,Build web applications with React Node.js and GraphQL,United States,$150000-$200000
+DevOps Engineer,Amazon,https://logo.clearbit.com/amazon.com,Seattle WA,Full-time,Senior,https://linkedin.com/jobs/4,Manage AWS infrastructure Docker Kubernetes CI/CD pipelines,United States,$130000-$190000
+Ingénieur Logiciel,Capgemini,https://logo.clearbit.com/capgemini.com,Casablanca,Full-time,Mid-Level,https://linkedin.com/jobs/11,Développement applications web Java Spring Boot Angular PostgreSQL,Morocco,200000-300000 MAD
+Développeur Full Stack,Accenture,https://logo.clearbit.com/accenture.com,Rabat,Full-time,Junior,https://linkedin.com/jobs/12,Créer applications React Node.js MongoDB Git Docker,Morocco,180000-250000 MAD
+DevOps Engineer,BMCE Bank,https://logo.clearbit.com/bmcebank.ma,Casablanca,Full-time,Senior,https://linkedin.com/jobs/14,Gérer infrastructure cloud AWS Docker Kubernetes Jenkins,Morocco,280000-400000 MAD
+Frontend Developer,SQLI,https://logo.clearbit.com/sqli.com,Rabat,Full-time,Junior,https://linkedin.com/jobs/17,Créer interfaces HTML CSS JavaScript Vue.js responsive,Morocco,150000-210000 MAD
+Développeur Python,CGI Maroc,https://logo.clearbit.com/cgi.com,Casablanca,Full-time,Mid-Level,https://linkedin.com/jobs/18,Développer Python Django Flask PostgreSQL REST APIs,Morocco,190000-270000 MAD
