@@ -1,4 +1,4 @@
-Job_Title,Company,Company_Logo,Location,Work_Type,Experience_Level,LinkedIn_URL,Job Description,Country,Salary Range
+Job Title,Company,Company Logo,Location,Work Type,Experience Level,LinkedIn URL,Job Description,Country,Salary Range
 Software Engineer,Google,https://logo.clearbit.com/google.com,Mountain View CA,Full-time,Mid-Level,https://linkedin.com/jobs/1,Design and develop scalable software solutions using Python Java and cloud technologies,United States,$120000-$180000
 Full Stack Developer,Meta,https://logo.clearbit.com/meta.com,Menlo Park CA,Full-time,Senior,https://linkedin.com/jobs/2,Build web applications with React Node.js and GraphQL,United States,$150000-$200000
 DevOps Engineer,Amazon,https://logo.clearbit.com/amazon.com,Seattle WA,Full-time,Senior,https://linkedin.com/jobs/4,Manage AWS infrastructure Docker Kubernetes CI/CD pipelines,United States,$130000-$190000
