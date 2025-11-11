@@ -25,10 +25,12 @@ dist-ssr
 
 # Large data files (don't commit to GitHub)
 public/job_descriptions.csv
-backend/*.csv
 backend/*.pkl
 backend/*.joblib
-*.csv
+
+# Allow our managed datasets
+!backend/jobs_sample.csv
+!backend/jobs_dataset_50k.csv
 
 # Python
 __pycache__/

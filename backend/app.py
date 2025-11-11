@@ -72,81 +72,29 @@ class HealthResponse(BaseModel):
 # ==========================================
 
 # CSV Loading Configuration
-# Option 1: Local file (for large dataset)
-CSV_PATH_LARGE = os.path.join(os.path.dirname(__file__), '..', 'public', 'job_descriptions.csv')
-# Option 2: Sample file (for demo/testing)
+# Main dataset: 50,000 jobs across multiple domains (40% IT focus)
+CSV_PATH_MAIN = os.path.join(os.path.dirname(__file__), 'jobs_dataset_50k.csv')
+# Fallback: Sample file (for demo/testing if main dataset not found)
 CSV_PATH_SAMPLE = os.path.join(os.path.dirname(__file__), 'jobs_sample.csv')
-# Option 3: Cloud storage URL (recommended for production)
-CSV_CLOUD_URL = os.getenv('JOB_CSV_URL', None)  # Set this in Koyeb environment variables
-
-def download_csv_from_cloud(url, local_path):
-    """Download CSV from cloud storage URL (handles Google Drive large files)"""
-    try:
-        import requests
-        print(f"📥 Downloading CSV from cloud storage...")
-        
-        # For Google Drive, we need to handle the virus scan warning for large files
-        session = requests.Session()
-        response = session.get(url, stream=True)
-        
-        # Check if this is the virus scan warning page
-        if 'drive.google.com' in url and response.status_code == 200:
-            # Look for the confirm token in the response
-            if 'virus scan warning' in response.text.lower():
-                print("⚠️ Google Drive virus scan detected, extracting confirm token...")
-                # Extract file ID and use usercontent domain with confirm=t
-                file_id = url.split('id=')[1].split('&')[0] if 'id=' in url else None
-                if file_id:
-                    download_url = f"https://drive.usercontent.google.com/download?id={file_id}&export=download&confirm=t"
-                    print(f"🔄 Retrying with confirm token...")
-                    response = session.get(download_url, stream=True)
-        
-        response.raise_for_status()
-        
-        # Download the file
-        total_size = 0
-        with open(local_path, 'wb') as f:
-            for chunk in response.iter_content(chunk_size=8192*128):  # 1MB chunks
-                if chunk:
-                    f.write(chunk)
-                    total_size += len(chunk)
-                    # Print progress every 100MB
-                    if total_size % (100 * 1024 * 1024) == 0:
-                        print(f"📊 Downloaded {total_size / (1024*1024):.0f} MB...")
-        
-        print(f"✅ Downloaded {total_size / (1024*1024):.2f} MB to {local_path}")
-        return True
-    except Exception as e:
-        print(f"❌ Failed to download CSV: {e}")
-        import traceback
-        traceback.print_exc()
-        return False
 
 def load_jobs_dataset():
-    """Load and return the jobs dataset"""
-    # Try cloud storage first (if URL is configured)
-    if CSV_CLOUD_URL:
-        cloud_cache_path = '/tmp/job_descriptions.csv'
-        if not os.path.exists(cloud_cache_path):
-            if download_csv_from_cloud(CSV_CLOUD_URL, cloud_cache_path):
-                try:
-                    df = pd.read_csv(cloud_cache_path, encoding='utf-8', on_bad_lines='skip')
-                    print(f"✅ Loaded {len(df)} jobs from cloud storage")
-                    return df
-                except Exception as e:
-                    print(f"⚠️ Could not load cloud CSV: {e}")
-    
-    # Try large local CSV
-    if os.path.exists(CSV_PATH_LARGE):
+    """Load and return the jobs dataset (50,000 diverse jobs)"""
+    # Try main 50k dataset first
+    if os.path.exists(CSV_PATH_MAIN):
         try:
-            df = pd.read_csv(CSV_PATH_LARGE, encoding='utf-8', on_bad_lines='skip')
-            print(f"✅ Loaded {len(df)} jobs from large CSV")
+            print(f"� Loading main dataset (50,000 jobs)...")
+            df = pd.read_csv(CSV_PATH_MAIN, encoding='utf-8', on_bad_lines='skip')
+            print(f"✅ Loaded {len(df)} jobs from main dataset")
+            print(f"   📊 Memory usage: ~{df.memory_usage(deep=True).sum() / (1024*1024):.1f} MB")
             return df
         except Exception as e:
-            print(f"⚠️ Could not load large CSV: {e}")
+            print(f"⚠️ Could not load main dataset: {e}")
+            import traceback
+            traceback.print_exc()
     
-    # Fallback to sample CSV
+    # Fallback to sample CSV (no sampling needed for small file)
     try:
+        print(f"📂 Main dataset not found, using sample...")
         df = pd.read_csv(CSV_PATH_SAMPLE, encoding='utf-8')
         print(f"✅ Loaded {len(df)} jobs from sample CSV (demo mode)")
         return df
