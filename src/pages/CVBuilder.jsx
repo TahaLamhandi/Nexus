@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import {
@@ -26,6 +26,11 @@ const CVBuilder = () => {
   const [activeSection, setActiveSection] = useState('personal');
   const [profileImage, setProfileImage] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
+
+  // Scroll to top when component mounts
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
 
   // Form state
   const [cvData, setCvData] = useState({
@@ -229,7 +234,7 @@ const CVBuilder = () => {
   const handleGenerateCV = async () => {
     try {
       await generateCV(cvData, imagePreview);
-      alert('CV generated successfully! Check your downloads folder.');
+      // PDF will download automatically - no alert needed
     } catch (error) {
       console.error('Error generating CV:', error);
       alert('Error generating CV. Please try again.');
@@ -405,20 +410,6 @@ const CVBuilder = () => {
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div>
-                      <label className="flex items-center gap-2 text-sm font-semibold text-gray-700 mb-2">
-                        <Mail size={16} className="text-primary-600" />
-                        Email <span className="text-red-500">*</span>
-                      </label>
-                      <input
-                        type="email"
-                        value={cvData.personal.email}
-                        onChange={(e) => handlePersonalChange('email', e.target.value)}
-                        placeholder="john@example.com"
-                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none"
-                      />
-                    </div>
-
                       <div className="group">
                         <label className="flex items-center gap-2 text-sm font-semibold text-gray-700 mb-2 group-focus-within:text-primary-600 transition-colors">
                           <Mail size={18} className="text-primary-500" />
