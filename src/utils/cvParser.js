@@ -1067,6 +1067,37 @@ const extractProjects = (text) => {
         continue;
       }
       
+      // If we have a current project, collect description lines (non-empty, not headers, not next category)
+      if (currentProj && currentProj.name && line.length > 15 && line.length < 200) {
+        // Skip if it's a new category header
+        if (line.match(/^[A-Z\s]+(PROGRAMMING|NETWORKING|WEB|MOBILE|DATA|DATABASE)\s+PROJECT$/i) ||
+            line.match(/^[A-Z\s]+PROJECT$/i)) {
+          // This is a new project category, don't add as description
+        }
+        // Skip addresses, contact info, URLs, section headers
+        else if (line.match(/\b(rue|street|avenue|road)\b/i) ||
+                 line.match(/\d{4,5}/) ||
+                 line.match(/@/) ||
+                 line.match(/^(www\.|http|linkedin|github)/i) ||
+                 line.match(/^[A-Z\s]{10,}$/) || // All caps headers like "S K I L L S"
+                 line.match(/^(EDUCATION|EXPERIENCE|SKILLS|LANGUAGES|CERTIFICATIONS)/i)) {
+          // Skip these lines
+        }
+        // Skip "GitHub Link:" line
+        else if (line.match(/^GitHub Link:/i)) {
+          // Skip, but capture URL if on same line
+          const urlMatch = line.match(/https?:\/\/[^\s]+/);
+          if (urlMatch) {
+            currentProj.technologies.push(urlMatch[0]);
+          }
+        }
+        // This is likely a description line
+        else if (line.match(/^[A-Z]/) && !line.match(/^[A-Z\s]+$/)) {
+          currentProj.description.push(line);
+          console.log(`   📄 Added description to "${currentProj.name}": "${line.substring(0, 50)}..."`);
+        }
+      }
+      
       // NEW PATTERN: Bullet points with project title and technologies on SAME line
       // Format: "Project Title   Tech1, Tech2, Tech3"
       // Examples from Oussama's CV:
@@ -1308,6 +1339,12 @@ const extractProjects = (text) => {
         }
       }
     }
+  }
+  
+  // Add the last project if it exists (important for category header format)
+  if (currentProj && currentProj.name) {
+    projects.push(currentProj);
+    console.log(`✅ Added final project: "${currentProj.name}"`);
   }
   
   // Filter out non-project entries (activities, memberships, description fragments, etc.)
