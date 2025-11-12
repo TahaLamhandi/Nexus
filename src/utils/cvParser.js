@@ -788,6 +788,7 @@ const extractProjects = (text) => {
   console.log('🚀 Extracting projects...');
   
   const projects = [];
+  let currentProj = null; // For tracking current project being built
   const lines = text.split('\n').map(line => line.trim()).filter(line => line.length > 0);
   
   console.log(`🔍 Scanning entire CV for projects (multiple formats supported)...`);
@@ -1000,7 +1001,6 @@ const extractProjects = (text) => {
     console.log('🔄 No projects found with ➢ format. Trying alternative formats...');
     
     // Look for projects in the section after "Projects" header
-    let currentProj = null;
     let projectCategoryHeader = null; // For "C PROGRAMMING PROJECT", "LINUX NETWORKING PROJECT", etc.
     
     for (let i = projectSectionStart + 1; i < searchLines.length; i++) {
