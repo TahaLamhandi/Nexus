@@ -19,7 +19,7 @@ import uvicorn
 app = FastAPI(
     title="Nexus CV Analysis API - ML Enhanced",
     description="AI-powered career analytics with trained ML models",
-    version="2.0.0"
+    version="2.1.0"
 )
 
 # Enable CORS for React frontend
@@ -138,7 +138,21 @@ def load_jobs_dataset():
     """Load the jobs dataset"""
     global jobs_df
     
-    csv_path = 'jobs_dataset_50k.csv'
+    # Try multiple paths (for different deployment environments)
+    possible_paths = [
+        'jobs_dataset_50k.csv',
+        './jobs_dataset_50k.csv',
+        'backend/jobs_dataset_50k.csv',
+        '../jobs_dataset_50k.csv'
+    ]
+    
+    for csv_path in possible_paths:
+        if os.path.exists(csv_path):
+            print(f"📂 Found dataset at: {csv_path}")
+            break
+    else:
+        print(f"❌ Dataset not found in any of these locations: {possible_paths}")
+        return False
     
     try:
         print(f"📂 Loading jobs dataset: {csv_path}")
@@ -417,7 +431,7 @@ async def health_check():
     """Health check endpoint"""
     return HealthResponse(
         status="healthy",
-        version="2.0.0",
+        version="2.1.0",
         ml_library="scikit-learn (Trained Models)",
         model_loaded=trained_model is not None
     )
