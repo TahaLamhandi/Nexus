@@ -261,6 +261,26 @@ const extractName = (text) => {
   console.log('First 10 lines for name detection:');
   lines.slice(0, 10).forEach((line, idx) => console.log(`  ${idx}: "${line.trim()}"`));
   
+  // Check if first two lines are single words (common in modern CVs: FIRSTNAME on line 1, LASTNAME on line 2)
+  if (lines.length >= 2) {
+    const line1 = lines[0].trim();
+    const line2 = lines[1].trim();
+    
+    // Pattern: Single word per line (e.g., "TAHA" and "LAMHANDI")
+    if (line1.length >= 3 && line1.length <= 25 && 
+        line2.length >= 3 && line2.length <= 25 &&
+        /^[A-ZÀ-Ÿ]+$/.test(line1) && 
+        /^[A-ZÀ-Ÿ]+$/.test(line2) &&
+        !line1.match(/CV|RESUME|CURRICULUM|STAGE|INTERNSHIP/) &&
+        !line2.match(/CV|RESUME|CURRICULUM|STAGE|INTERNSHIP/)) {
+      const firstName = line1.charAt(0) + line1.slice(1).toLowerCase();
+      const lastName = line2.charAt(0) + line2.slice(1).toLowerCase();
+      const name = `${firstName} ${lastName}`;
+      console.log(`✅ Name found (Two-line format): ${name}`);
+      return name;
+    }
+  }
+  
   // Special case: Check if name is split across first few lines (common in CVs)
   // e.g., Line 0: "Lamhandi", Line 5: "Taha"
   const potentialLastName = lines[0]?.trim();
@@ -288,7 +308,7 @@ const extractName = (text) => {
     
     // Skip lines with common CV headers or long text
     if (line.length > 60 || line.length < 3) continue;
-    if (/ingénieur|engineer|cv|resume|curriculum|élève|stage|transformation|digital/i.test(line)) continue;
+    if (/ingénieur|engineer|cv|resume|curriculum|élève|stage|transformation|digital|looking|for|internship/i.test(line)) continue;
     
     // Pattern 0: "LASTNAME FIRST PART" (all caps, possibly fragmented)
     // Handles: "HAMRI YASS IR" → "YASSIR HAMRI"
@@ -683,6 +703,13 @@ const extractExperience = (text) => {
     if (lowerLine.includes('profil') || lowerLine.includes('summary') || 
         lowerLine.includes('avec') && lowerLine.includes('expérience')) continue;
     
+    // Skip common soft skills that are NOT job titles
+    const softSkillsToSkip = /^(leadership|time management|communication|teamwork|work in teams|problem[- ]solving|adaptability|creativity|critical thinking|organization|planning|strong communication)$/i;
+    if (line.match(softSkillsToSkip)) {
+      console.log(`  ⏭️  Skipping soft skill (not a job title): "${line}"`);
+      continue;
+    }
+    
     // Pattern 1: Job titles (typical keywords) or Internship headers
     const jobKeywords = /(ingénieur|engineer|développeur|developer|administrateur|administrator|consultant|manager|analyste|analyst|devops|architecte|architect|chef|lead|senior|junior|internship|intern|stage)/i;
     
@@ -777,15 +804,18 @@ const extractProjects = (text) => {
     const originalLine = searchLines[i];
     
     // Check for project keywords or achievements section
-    // Also handle "P R O J E C T S" (spaced letters)
+    // Also handle "P R O J E C T S" and "C O M P L E T E D   P R O J E C T S" (spaced letters)
     const lineNoSpaces = originalLine.replace(/\s+/g, '').toLowerCase();
     if (line.includes('projet') || line.includes('project') || 
         line === 'projets' || line === 'projects' ||
         lineNoSpaces === 'projects' || lineNoSpaces === 'projets' ||
+        lineNoSpaces.includes('completedprojects') || lineNoSpaces.includes('completedproject') ||
+        lineNoSpaces.includes('compeleted') || // Handle typo
         line.includes('realisation') || line.includes('réalisation') ||
         originalLine.match(/PRINCIPALES RÉALISATIONS/i) ||
+        originalLine.match(/C\s+O\s+M\s+P.*P\s+R\s+O\s+J\s+E\s+C\s+T/i) ||
         line.includes('achievements') || line.includes('accomplishments')) {
-      if (line.length < 40 || lineNoSpaces.length < 15) { // Section headers are usually short
+      if (line.length < 50 || lineNoSpaces.length < 20) { // Section headers are usually short
         inProjectSection = true;
         projectSectionStart = i;
         console.log(`✅ Found project/achievements section at line ${i}: "${searchLines[i]}"`);
@@ -971,6 +1001,7 @@ const extractProjects = (text) => {
     
     // Look for projects in the section after "Projects" header
     let currentProj = null;
+    let projectCategoryHeader = null; // For "C PROGRAMMING PROJECT", "LINUX NETWORKING PROJECT", etc.
     
     for (let i = projectSectionStart + 1; i < searchLines.length; i++) {
       const line = searchLines[i].trim();
@@ -988,6 +1019,34 @@ const extractProjects = (text) => {
           console.log(`✅ Added project before section end: "${currentProj.name}"`);
         }
         break;
+      }
+      
+      // PATTERN: Project category headers (e.g., "C PROGRAMMING PROJECT", "LINUX NETWORKING PROJECT")
+      // These are usually followed by the actual project name on the next line
+      if (line.match(/^[A-Z\s]+(PROGRAMMING|NETWORKING|WEB|MOBILE|DATA|DATABASE)\s+PROJECT$/i) ||
+          line.match(/^[A-Z\s]+PROJECT$/i)) {
+        console.log(`🏷️  Found project category header: "${line}"`);
+        projectCategoryHeader = line;
+        continue;
+      }
+      
+      // If we just saw a category header, the next non-empty line is likely the project name
+      if (projectCategoryHeader && line.length > 5 && line.length < 80) {
+        console.log(`📝 Project name after category header: "${line}"`);
+        
+        // Save previous project if exists
+        if (currentProj && currentProj.name) {
+          projects.push(currentProj);
+          console.log(`✅ Added previous project: "${currentProj.name}"`);
+        }
+        
+        currentProj = {
+          name: line,
+          description: [],
+          technologies: []
+        };
+        projectCategoryHeader = null; // Reset
+        continue;
       }
       
       // NEW PATTERN: Bullet points with project title and technologies on SAME line
