@@ -425,7 +425,7 @@ async def health_check():
 @app.post("/api/predict-jobs", response_model=PredictJobsResponse)
 async def predict_jobs(request: PredictJobsRequest):
     """
-    Predict best matching jobs for a CV using trained ML model
+    Predict best matching jobs for a CV using trained ML model or fallback
     """
     try:
         cv_data = request.cvData
@@ -434,15 +434,24 @@ async def predict_jobs(request: PredictJobsRequest):
         # Log incoming CV data for debugging
         print(f"\n🔍 Received CV with {len(cv_data.get('skills', []))} skills")
         
-        # Get job matches
-        matches = predict_job_matches(cv_data, top_k)
+        # Get job matches (now returns dict with 'matches' and 'algorithm')
+        result = predict_job_matches(cv_data, top_k)
+        
+        # Handle both old format (list) and new format (dict)
+        if isinstance(result, dict):
+            matches = result['matches']
+            algorithm = result.get('algorithm', 'Unknown')
+        else:
+            # Backwards compatibility
+            matches = result
+            algorithm = "ML Enhanced (TF-IDF + Skill Matching)"
         
         return PredictJobsResponse(
             success=True,
             matches=matches,
             totalJobs=len(jobs_df) if jobs_df is not None else 0,
-            algorithm="ML Enhanced (TF-IDF + Skill Matching)",
-            model_used=type(trained_model).__name__ if trained_model else None
+            algorithm=algorithm,
+            model_used=type(trained_model).__name__ if trained_model else "Fallback TF-IDF"
         )
     
     except Exception as e:
