@@ -1031,7 +1031,25 @@ const extractProjects = (text) => {
       }
       
       // If we just saw a category header, the next non-empty line is likely the project name
+      // BUT skip addresses, contact info, and URLs
       if (projectCategoryHeader && line.length > 5 && line.length < 80) {
+        // Skip addresses (contain "rue", "street", "avenue", postal codes, etc.)
+        if (line.match(/\b(rue|street|avenue|road|blvd|boulevard|ave|st\.|drive|lane)\b/i) ||
+            line.match(/\d{4,5}/) || // Postal codes
+            line.match(/^\d+\s*,/) || // Starts with number and comma
+            line.match(/,\s*\w+\s+\d{4,5}$/)) { // Ends with ", City 50000"
+          console.log(`  ⏭️  Skipping address line: "${line}"`);
+          continue;
+        }
+        
+        // Skip contact info (phone, email, URLs)
+        if (line.match(/^\d{10}/) || // Phone number
+            line.match(/@/) || // Email
+            line.match(/^(www\.|http|linkedin|github)/i)) { // URLs
+          console.log(`  ⏭️  Skipping contact info: "${line}"`);
+          continue;
+        }
+        
         console.log(`📝 Project name after category header: "${line}"`);
         
         // Save previous project if exists
