@@ -15,7 +15,19 @@ import {
   Rocket,
   MapPin,
   Calendar,
-  Users
+  Users,
+  Crown,
+  MessageCircle,
+  Handshake,
+  Puzzle,
+  Lightbulb,
+  Clock,
+  Brain,
+  Repeat,
+  ClipboardList,
+  Star,
+  Heart,
+  Shield
 } from 'lucide-react';
 import { SiLinkedin } from 'react-icons/si';
 import Card from '../components/Card';
@@ -88,8 +100,10 @@ const ResultsDashboard = () => {
         console.log('Top 3 matches:', result.matches.slice(0, 3).map(m => ({
           title: m.Job_Title,
           company: m.Company,
-          match: m.matchScore
+          match: m.matchScore,
+          linkedinUrl: m.LinkedIn_URL
         })));
+        console.log('🔗 LinkedIn URLs check:', result.matches.slice(0, 3).map(m => m.LinkedIn_URL));
         
         setJobMatches(result.matches);
         setIsLoadingJobs(false);
@@ -226,42 +240,172 @@ const ResultsDashboard = () => {
           </Card>
         </motion.div>
 
-        {/* Skills Section with Real Icons */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2 }}
-          className="mb-4 sm:mb-8"
-        >
-          <Card className="p-4 sm:p-6 md:p-8">
-            <h2 className="text-lg sm:text-2xl font-bold text-gray-800 mb-4 sm:mb-6 flex items-center gap-1.5 sm:gap-2">
-              <Code className="w-5 h-5 sm:w-6 sm:h-6 text-primary-600" />
-              Technical Skills
-            </h2>
-            {cvData.skills && cvData.skills.length > 0 ? (
+        {/* Technical Skills Section */}
+        {cvData.technicalSkills && cvData.technicalSkills.length > 0 && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 }}
+            className="mb-4 sm:mb-8"
+          >
+            <Card className="p-4 sm:p-6 md:p-8">
+              <h2 className="text-lg sm:text-2xl font-bold text-gray-800 mb-4 sm:mb-6 flex items-center gap-1.5 sm:gap-2">
+                <Code className="w-5 h-5 sm:w-6 sm:h-6 text-primary-600" />
+                Technical Skills
+              </h2>
               <div className="flex flex-wrap gap-2 sm:gap-3">
-                {cvData.skills.map((skill, index) => (
-                  <motion.div
-                    key={index}
-                    initial={{ opacity: 0, scale: 0.8 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ delay: 0.3 + index * 0.05 }}
-                    className="group relative"
-                  >
-                    <div className="flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 sm:py-3 rounded-xl bg-gradient-to-r from-gray-50 to-primary-50 border-2 border-gray-200 hover:border-primary-400 hover:shadow-lg transition-all duration-300 cursor-pointer">
-                      {getTechIcon(skill, 'text-xl sm:text-3xl')}
-                      <span className="text-sm sm:text-base font-medium text-gray-700 group-hover:text-primary-700 transition-colors">
-                        {skill}
-                      </span>
-                    </div>
-                  </motion.div>
-                ))}
+                {cvData.technicalSkills.map((skill, index) => {
+                  // Map skill names to Skill Icons API format
+                  const getSkillIconName = (skillName) => {
+                    const lower = skillName.toLowerCase();
+                    
+                    // Popular technologies mapping
+                    const skillMap = {
+                      'javascript': 'js', 'typescript': 'ts', 'python': 'py',
+                      'java': 'java', 'c++': 'cpp', 'c#': 'cs', 'csharp': 'cs',
+                      'php': 'php', 'ruby': 'ruby', 'swift': 'swift', 'kotlin': 'kotlin',
+                      'go': 'go', 'golang': 'go', 'rust': 'rust', 'scala': 'scala',
+                      'react': 'react', 'reactjs': 'react', 'vue': 'vue', 'vuejs': 'vue',
+                      'angular': 'angular', 'angularjs': 'angular', 'svelte': 'svelte',
+                      'node': 'nodejs', 'nodejs': 'nodejs', 'node.js': 'nodejs',
+                      'express': 'express', 'expressjs': 'express', 'nextjs': 'nextjs',
+                      'next.js': 'nextjs', 'nuxt': 'nuxt', 'django': 'django',
+                      'flask': 'flask', 'fastapi': 'fastapi', 'spring': 'spring',
+                      'html': 'html', 'html5': 'html', 'css': 'css', 'css3': 'css',
+                      'sass': 'sass', 'scss': 'sass', 'tailwind': 'tailwind',
+                      'tailwindcss': 'tailwind', 'bootstrap': 'bootstrap',
+                      'docker': 'docker', 'kubernetes': 'kubernetes', 'k8s': 'kubernetes',
+                      'git': 'git', 'github': 'github', 'gitlab': 'gitlab',
+                      'aws': 'aws', 'azure': 'azure', 'gcp': 'gcp', 'firebase': 'firebase',
+                      'mongodb': 'mongodb', 'mongo': 'mongodb', 'postgresql': 'postgres',
+                      'postgres': 'postgres', 'mysql': 'mysql', 'redis': 'redis',
+                      'sqlite': 'sqlite', 'graphql': 'graphql', 'apollo': 'apollo',
+                      'redux': 'redux', 'webpack': 'webpack', 'vite': 'vite',
+                      'jest': 'jest', 'cypress': 'cypress', 'selenium': 'selenium',
+                      'tensorflow': 'tensorflow', 'pytorch': 'pytorch', 'sklearn': 'sklearn',
+                      'pandas': 'pandas', 'numpy': 'numpy', 'jupyter': 'jupyter',
+                      'photoshop': 'ps', 'adobe photoshop': 'ps', 'illustrator': 'ai',
+                      'adobe illustrator': 'ai', 'figma': 'figma', 'xd': 'xd',
+                      'premiere': 'pr', 'after effects': 'ae', 'blender': 'blender',
+                      '3ds max': '3dsmax', '3d studio max': '3dsmax', '3dstudiomax': '3dsmax',
+                      'linux': 'linux', 'ubuntu': 'ubuntu', 'windows': 'windows',
+                      'vim': 'vim', 'vscode': 'vscode', 'visualstudio': 'visualstudio',
+                      'word': 'word', 'excel': 'excel', 'powerpoint': 'powerpoint',
+                      'outlook': 'outlook'
+                    };
+                    
+                    // Check exact match first
+                    if (skillMap[lower]) return skillMap[lower];
+                    
+                    // Check partial matches
+                    for (const [key, value] of Object.entries(skillMap)) {
+                      if (lower.includes(key)) return value;
+                    }
+                    
+                    return null; // No match found
+                  };
+
+                  const iconName = getSkillIconName(skill);
+                  
+                  return (
+                    <motion.div
+                      key={index}
+                      initial={{ opacity: 0, scale: 0.8 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      transition={{ delay: 0.3 + index * 0.05 }}
+                      className="group relative"
+                    >
+                      <div className="flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 sm:py-3 rounded-xl bg-gradient-to-r from-white to-blue-50 border-2 border-blue-200 hover:border-blue-400 hover:shadow-lg transition-all duration-300 cursor-pointer">
+                        {iconName ? (
+                          <img 
+                            src={`https://skillicons.dev/icons?i=${iconName}`}
+                            alt={skill}
+                            className="w-5 h-5 sm:w-6 sm:h-6 object-contain"
+                            onError={(e) => {
+                              e.target.style.display = 'none';
+                              e.target.nextElementSibling.style.display = 'inline-flex';
+                            }}
+                          />
+                        ) : null}
+                        <span className={iconName ? 'hidden' : 'inline-flex'}>{getTechIcon(skill, 'text-lg sm:text-xl')}</span>
+                        <span className="text-sm sm:text-base font-medium text-gray-700 group-hover:text-blue-700 transition-colors">
+                          {skill}
+                        </span>
+                      </div>
+                    </motion.div>
+                  );
+                })}
               </div>
-            ) : (
-              <p className="text-gray-500">No skills detected in CV</p>
-            )}
-          </Card>
-        </motion.div>
+            </Card>
+          </motion.div>
+        )}
+
+        {/* Soft Skills Section with Beautiful Icons */}
+        {cvData.softSkills && cvData.softSkills.length > 0 && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.25 }}
+            className="mb-4 sm:mb-8"
+          >
+            <Card className="p-4 sm:p-6 md:p-8">
+              <h2 className="text-lg sm:text-2xl font-bold text-gray-800 mb-4 sm:mb-6 flex items-center gap-1.5 sm:gap-2">
+                <Users className="w-5 h-5 sm:w-6 sm:h-6 text-purple-600" />
+                Soft Skills
+              </h2>
+              <div className="flex flex-wrap gap-2 sm:gap-3">
+                {cvData.softSkills.map((skill, index) => {
+                  // Map soft skills to appropriate React Icons
+                  const getSoftSkillIcon = (skillName) => {
+                    const lower = skillName.toLowerCase();
+                    if (lower.includes('leadership') || lower.includes('lead')) 
+                      return <Crown className="w-5 h-5 sm:w-6 sm:h-6 text-yellow-500" />;
+                    if (lower.includes('communication')) 
+                      return <MessageCircle className="w-5 h-5 sm:w-6 sm:h-6 text-blue-500" />;
+                    if (lower.includes('team') || lower.includes('collaboration')) 
+                      return <Handshake className="w-5 h-5 sm:w-6 sm:h-6 text-green-500" />;
+                    if (lower.includes('problem') || lower.includes('solving')) 
+                      return <Puzzle className="w-5 h-5 sm:w-6 sm:h-6 text-orange-500" />;
+                    if (lower.includes('creative') || lower.includes('innovation')) 
+                      return <Lightbulb className="w-5 h-5 sm:w-6 sm:h-6 text-yellow-400" />;
+                    if (lower.includes('time') || lower.includes('management')) 
+                      return <Clock className="w-5 h-5 sm:w-6 sm:h-6 text-indigo-500" />;
+                    if (lower.includes('critical') || lower.includes('thinking')) 
+                      return <Brain className="w-5 h-5 sm:w-6 sm:h-6 text-purple-500" />;
+                    if (lower.includes('adaptab') || lower.includes('flexible')) 
+                      return <Repeat className="w-5 h-5 sm:w-6 sm:h-6 text-teal-500" />;
+                    if (lower.includes('organiz')) 
+                      return <ClipboardList className="w-5 h-5 sm:w-6 sm:h-6 text-cyan-500" />;
+                    if (lower.includes('motivat')) 
+                      return <Target className="w-5 h-5 sm:w-6 sm:h-6 text-red-500" />;
+                    if (lower.includes('conflict')) 
+                      return <Shield className="w-5 h-5 sm:w-6 sm:h-6 text-slate-500" />;
+                    if (lower.includes('empathy') || lower.includes('emotional')) 
+                      return <Heart className="w-5 h-5 sm:w-6 sm:h-6 text-pink-500" />;
+                    return <Star className="w-5 h-5 sm:w-6 sm:h-6 text-amber-500" />; // Default
+                  };
+
+                  return (
+                    <motion.div
+                      key={index}
+                      initial={{ opacity: 0, scale: 0.8 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      transition={{ delay: 0.35 + index * 0.05 }}
+                      className="group relative"
+                    >
+                      <div className="flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 sm:py-3 rounded-xl bg-gradient-to-r from-white to-purple-50 border-2 border-purple-200 hover:border-purple-400 hover:shadow-lg transition-all duration-300 cursor-pointer">
+                        {getSoftSkillIcon(skill)}
+                        <span className="text-sm sm:text-base font-medium text-gray-700 group-hover:text-purple-700 transition-colors">
+                          {skill}
+                        </span>
+                      </div>
+                    </motion.div>
+                  );
+                })}
+              </div>
+            </Card>
+          </motion.div>
+        )}
 
         {/* Projects Section */}
         {cvData.projects && cvData.projects.length > 0 && (
@@ -398,7 +542,17 @@ const ResultsDashboard = () => {
               </div>
             ) : jobMatches.length > 0 ? (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
-                {jobMatches.map((job, index) => (
+                {jobMatches.map((job, index) => {
+                  // Debug log for first job
+                  if (index === 0) {
+                    console.log('🔍 First job card data:', {
+                      Company: job.Company,
+                      Job_Title: job.Job_Title,
+                      allKeys: Object.keys(job)
+                    });
+                  }
+                  
+                  return (
                   <motion.div
                     key={index}
                     initial={{ opacity: 0, scale: 0.95 }}
@@ -410,22 +564,55 @@ const ResultsDashboard = () => {
                       {/* Match Score Badge */}
                       <div className="flex items-start justify-between mb-2 sm:mb-3">
                         <div className="flex-1 flex items-start gap-2 sm:gap-3">
-                          {/* Company Logo */}
-                          {job.Company_Logo && (
-                            <div className="flex-shrink-0 w-10 h-10 sm:w-12 sm:h-12 bg-white rounded-lg shadow-sm p-1 border border-gray-200">
-                              <img 
-                                src={job.Company_Logo} 
-                                alt={`${job.Company} logo`}
-                                className="w-full h-full object-contain"
-                                onError={(e) => {
-                                  // Fallback to placeholder if logo fails to load
-                                  e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(job.Company)}&background=6366f1&color=fff&size=128`;
-                                }}
-                              />
-                            </div>
-                          )}
+                          {/* Company Logo - Real logos using Google favicon service */}
+                          <div 
+                            style={{ 
+                              width: '48px', 
+                              height: '48px',
+                              minWidth: '48px', 
+                              minHeight: '48px',
+                              backgroundColor: 'white',
+                              borderRadius: '8px',
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              color: '#6366f1',
+                              fontSize: '18px',
+                              fontWeight: 'bold',
+                              flexShrink: 0,
+                              boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
+                              overflow: 'hidden',
+                              position: 'relative',
+                              border: '1px solid #e5e7eb'
+                            }}
+                          >
+                            {/* Fallback text - shows first 2 letters */}
+                            <span style={{ position: 'absolute', zIndex: 0, color: '#6366f1' }}>
+                              {(job.Company || 'C').split(' ').map(word => word.charAt(0)).join('').toUpperCase().slice(0, 2)}
+                            </span>
+                            {/* Google Favicon Service - no CORS issues, gets real company logos */}
+                            <img 
+                              src={`https://www.google.com/s2/favicons?domain=${(job.Company || '').toLowerCase().replace(/[\s-]+/g, '')}.com&sz=128`}
+                              alt={`${job.Company} logo`}
+                              style={{ 
+                                position: 'absolute',
+                                top: 0,
+                                left: 0,
+                                width: '100%', 
+                                height: '100%', 
+                                objectFit: 'contain',
+                                display: 'block',
+                                zIndex: 1,
+                                padding: '8px'
+                              }}
+                              onError={(e) => {
+                                // If fails, hide to show fallback initials
+                                e.target.style.display = 'none';
+                              }}
+                            />
+                          </div>
                           <div className="flex-1 min-w-0">
-                            <h3 className="font-bold text-sm sm:text-lg text-gray-800 mb-1 group-hover:text-primary-700 transition-colors truncate">
+                            <h3 className="font-bold text-sm sm:text-lg text-gray-800 mb-1 group-hover:text-primary-700 transition-colors break-words line-clamp-2">
                               {job.Job_Title || job.title || 'Position'}
                             </h3>
                             <div className="flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm text-gray-600 mb-1 sm:mb-2">
@@ -466,22 +653,35 @@ const ResultsDashboard = () => {
                         )}
                       </div>
                       
-                      {/* LinkedIn Link */}
-                      {job.LinkedIn_URL && (
+                      {/* LinkedIn Link - Always visible */}
+                      <div className="mt-2">
                         <a
-                          href={job.LinkedIn_URL}
+                          href={
+                            job.LinkedIn_URL && job.LinkedIn_URL.trim() !== '' && job.LinkedIn_URL !== 'nan'
+                              ? job.LinkedIn_URL
+                              : `https://www.linkedin.com/search/results/all/?keywords=${encodeURIComponent(job.Company || job.company || '')}`
+                          }
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="inline-flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 bg-[#0A66C2] text-white rounded-lg hover:bg-[#004182] transition-colors text-xs sm:text-sm font-medium"
+                          onClick={(e) => {
+                            const hasDirectURL = job.LinkedIn_URL && job.LinkedIn_URL.trim() !== '' && job.LinkedIn_URL !== 'nan';
+                            console.log(hasDirectURL ? '🔗 Opening job on LinkedIn:' : '🏢 Opening company search on LinkedIn:', hasDirectURL ? job.LinkedIn_URL : job.Company);
+                          }}
+                          className="inline-flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 bg-[#0A66C2] text-white rounded-lg hover:bg-[#004182] transition-colors text-xs sm:text-sm font-medium cursor-pointer"
                         >
                           <SiLinkedin className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-                          <span className="hidden sm:inline">View on LinkedIn</span>
+                          <span className="hidden sm:inline">
+                            {job.LinkedIn_URL && job.LinkedIn_URL.trim() !== '' && job.LinkedIn_URL !== 'nan' 
+                              ? 'View on LinkedIn' 
+                              : 'Find on LinkedIn'}
+                          </span>
                           <span className="sm:hidden">LinkedIn</span>
                         </a>
-                      )}
+                      </div>
                     </div>
                   </motion.div>
-                ))}
+                  );
+                })}
               </div>
             ) : (
               <div className="text-center py-8 text-gray-500">

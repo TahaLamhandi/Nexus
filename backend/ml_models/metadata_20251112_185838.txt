@@ -1,0 +1,7 @@
+timestamp: 20251112_185838
+best_model: Random Forest
+best_score: 1.0
+dataset_path: jobs_dataset_50k.csv
+total_jobs: 21014
+num_features: 583
+models_trained: ['Random Forest', 'Gradient Boosting', 'K-Nearest Neighbors', 'Naive Bayes']

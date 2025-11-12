@@ -1,5 +1,6 @@
 import * as pdfjsLib from 'pdfjs-dist';
 import mammoth from 'mammoth';
+import { parseWithGemini, formatGeminiData } from './geminiCVParser';
 
 // Set up the worker for PDF.js using the local build
 pdfjsLib.GlobalWorkerOptions.workerSrc = new URL(
@@ -8,7 +9,7 @@ pdfjsLib.GlobalWorkerOptions.workerSrc = new URL(
 ).toString();
 
 /**
- * Parse CV file and extract information
+ * Parse CV file and extract information using Gemini AI
  * @param {File} file - The CV file (PDF or Word)
  * @returns {Promise<Object>} Extracted CV information
  */
@@ -38,8 +39,12 @@ export const parseCVFile = async (file) => {
     console.log('Text extracted, length:', text.length);
     console.log('First 200 characters:', text.substring(0, 200));
 
-    // Extract information from text
-    const cvData = extractCVInformation(text);
+    // USE GEMINI AI to parse the CV intelligently
+    console.log('🤖 Using Gemini AI for intelligent CV parsing...');
+    const geminiData = await parseWithGemini(text);
+    const cvData = formatGeminiData(geminiData, text);
+    
+    console.log('✅ Gemini AI parsing complete!');
     
     return cvData;
   } catch (error) {
@@ -308,7 +313,18 @@ const extractName = (text) => {
     
     // Skip lines with common CV headers or long text
     if (line.length > 60 || line.length < 3) continue;
-    if (/ingénieur|engineer|cv|resume|curriculum|élève|stage|transformation|digital|looking|for|internship/i.test(line)) continue;
+    
+    // Skip obvious section headers (but check BEFORE engineer check to allow names first)
+    if (line.match(/^(CV|RESUME|CURRICULUM VITAE|CAREER OBJECTIVE|CONTACTS?|CONTACT|PROFESSIONAL SKILLS|SKILLS|OBJECTIVE|EDUCATION|FORMATION|CERTIFICATIONS?|LANGUAGES?|PROFICIENCY|WORK EXPERIENCE)$/i)) {
+      console.log(`  ⏭️  Skipping section header: "${line}"`);
+      continue;
+    }
+    
+    // Skip job titles (but only if they're standalone, not part of a name)
+    if (line.match(/^(MECHANICAL FIELD ENGINEER|FORENSIC ENGINEER|SOFTWARE ENGINEER|INGÉNIEUR)$/i)) {
+      console.log(`  ⏭️  Skipping job title: "${line}"`);
+      continue;
+    }
     
     // Pattern 0: "LASTNAME FIRST PART" (all caps, possibly fragmented)
     // Handles: "HAMRI YASS IR" → "YASSIR HAMRI"
@@ -319,6 +335,18 @@ const extractName = (text) => {
       const lastName = match0[1];
       const name = `${firstName.charAt(0) + firstName.slice(1).toLowerCase()} ${lastName.charAt(0) + lastName.slice(1).toLowerCase()}`;
       console.log(`✅ Name found (Pattern 0 - Fragmented): ${name}`);
+      return name;
+    }
+    
+    // Pattern 1a: "FIRSTNAME MIDDLE LASTNAME" (all caps with middle initial or name)
+    const pattern1a = /^([A-ZÀ-Ÿ]{3,})\s+([A-ZÀ-Ÿ]{1,})\s+([A-ZÀ-Ÿ]{3,})$/;
+    const match1a = line.match(pattern1a);
+    if (match1a) {
+      const firstName = match1a[1].charAt(0) + match1a[1].slice(1).toLowerCase();
+      const middleInitial = match1a[2].charAt(0);
+      const lastName = match1a[3].charAt(0) + match1a[3].slice(1).toLowerCase();
+      const name = `${firstName} ${middleInitial}. ${lastName}`;
+      console.log(`✅ Name found (Pattern 1a - FIRSTNAME MIDDLE LASTNAME): ${name}`);
       return name;
     }
     
@@ -398,7 +426,8 @@ const extractSkills = (text) => {
     'REST API', 'GraphQL', 'Microservices', 'Agile', 'Scrum', 'CI/CD', 'Jenkins',
     'Linux', 'Windows', 'macOS', 'Bash', 'PowerShell', 'Qt', 'SQLite',
     'Figma', 'Adobe XD', 'Photoshop', 'Illustrator', 'phpMyAdmin', 'MySQL Workbench',
-    'Excel', 'PowerPoint', 'Word', 'Tableau', 'Power BI'
+    'Excel', 'PowerPoint', 'Word', 'Tableau', 'Power BI',
+    'AutoCAD', 'SolidWorks', 'CATIA', 'MATLAB', 'LabVIEW', 'Revit', 'Inventor'
   ];
 
   // Find skills section
@@ -414,10 +443,11 @@ const extractSkills = (text) => {
     const line = lines[i].trim();
     const lineNoSpaces = line.replace(/\s+/g, '').toLowerCase();
     
-    // Detect TECH SKILLS section (including spaced "T E C H S K I L L S")
+    // Detect TECH SKILLS or PROFESSIONAL SKILLS section
     if (lineNoSpaces.includes('techskills') || lineNoSpaces.includes('technicalskills') || 
-        lineNoSpaces.includes('competencestechniques')) {
-      console.log(`✅ Found TECH SKILLS section at line ${i}: "${line}"`);
+        lineNoSpaces.includes('competencestechniques') ||
+        lineNoSpaces.includes('professionalskills') || lineNoSpaces.includes('profskills')) {
+      console.log(`✅ Found TECH/PROFESSIONAL SKILLS section at line ${i}: "${line}"`);
       inTechSkillsSection = true;
       sectionStarted = true;
       continue;
@@ -653,11 +683,15 @@ const extractExperience = (text) => {
   
   for (let i = 0; i < lines.length; i++) {
     const lowerLine = lines[i].toLowerCase().replace(/[éèê]/g, 'e');
+    const line = lines[i];
     
-    // Look for experience keywords
-    if (lowerLine.match(/^(experience|experiences|experien|work experience|professional experience|parcours)/i) ||
-        lowerLine.includes('exp') && lowerLine.includes('rience') ||
-        lines[i].match(/^EXPÉRIENCE/i)) {
+    // Only match if it's a SHORT line that looks like a section header (not a paragraph)
+    const isShortHeader = line.length < 50 && line.length > 3;
+    
+    // Look for experience section headers (must be short header line, not paragraph text)
+    if (isShortHeader && (
+        lowerLine.match(/^(experience|experiences|work experience|professional experience|parcours|proficiency|employment|work history|career history)$/i) ||
+        line.match(/^(EXPÉRIENCE|PROFICIENCY|EMPLOYMENT|EXPERIENCE PROFESSIONNELLE)$/i))) {
       experienceSectionStart = i;
       console.log(`✅ Found experience section at line ${i}: "${lines[i]}"`);
       break;
@@ -703,18 +737,67 @@ const extractExperience = (text) => {
     if (lowerLine.includes('profil') || lowerLine.includes('summary') || 
         lowerLine.includes('avec') && lowerLine.includes('expérience')) continue;
     
-    // Skip common soft skills that are NOT job titles
-    const softSkillsToSkip = /^(leadership|time management|communication|teamwork|work in teams|problem[- ]solving|adaptability|creativity|critical thinking|organization|planning|strong communication)$/i;
-    if (line.match(softSkillsToSkip)) {
-      console.log(`  ⏭️  Skipping soft skill (not a job title): "${line}"`);
+    // Skip common soft skills and descriptions that are NOT job titles
+    const notJobTitles = /^(leadership|time management|communication|teamwork|work in teams|problem[- ]solving|adaptability|creativity|critical thinking|organization|planning|strong communication|familiar with|exceptional|highly experienced|bachelor|master|degree|proficient|skilled|knowledge of|experience in|expertise)/i;
+    if (line.match(notJobTitles)) {
+      console.log(`  ⏭️  Skipping description (not a job title): "${line}"`);
       continue;
     }
     
-    // Pattern 1: Job titles (typical keywords) or Internship headers
-    const jobKeywords = /(ingénieur|engineer|développeur|developer|administrateur|administrator|consultant|manager|analyste|analyst|devops|architecte|architect|chef|lead|senior|junior|internship|intern|stage)/i;
+    // Pattern 1: Job titles with date (e.g., "Forensic Mechanical Engineer, 2016 - Present")
+    const jobWithDate = /^(.+?),\s*(\d{4})\s*[-–]\s*(\d{4}|present|présent|now)/i;
+    const matchJobDate = line.match(jobWithDate);
     
-    // Skip if it's just "and leadership" or similar fragment
+    if (matchJobDate) {
+      const jobTitle = matchJobDate[1].trim();
+      const dateRange = line.substring(jobTitle.length + 1).trim();
+      
+      // Save previous job
+      if (currentJob && currentJob.title) {
+        experience.push(currentJob);
+        console.log(`✅ Added experience: ${currentJob.title} at ${currentJob.company}`);
+      }
+      
+      currentJob = {
+        title: jobTitle,
+        company: '',
+        duration: dateRange,
+        description: []
+      };
+      
+      console.log(`  💼 Job title: ${jobTitle}`);
+      console.log(`  📅 Duration: ${dateRange}`);
+      
+      // Look for company name in next 2 lines
+      for (let j = i + 1; j < Math.min(i + 3, experienceLines.length); j++) {
+        const nextLine = experienceLines[j].trim();
+        
+        // Company names are usually short, capitalized, no bullets
+        if (nextLine.length > 2 && nextLine.length < 80 &&
+            !nextLine.startsWith('•') && !nextLine.startsWith('-') &&
+            !nextLine.match(/^\d/) && // Not a date
+            !nextLine.match(/^(mise|gestion|développement|performed|reviewed|conducted|devised|seeking)/i)) {
+          
+          if (!currentJob.company) {
+            currentJob.company = nextLine;
+            console.log(`  🏢 Company: ${nextLine}`);
+            break;
+          }
+        }
+      }
+      
+      continue;
+    }
+    
+    // Pattern 2: Job titles (typical keywords) WITHOUT date on same line
+    const jobKeywords = /(ingénieur|engineer|développeur|developer|administrateur|administrator|consultant|manager|analyste|analyst|devops|architecte|architect|chef|lead|senior|junior|internship|intern|stage|forensic)/i;
+    
+    // Skip if it's just "and leadership" or similar fragment, or starts with action verbs
     if (line.match(/^(and|et)\s/i) || line.length < 8) continue;
+    if (line.match(/^(performed|reviewed|conducted|devised|seeking|provided|interviewed|undertook|investigated|analyzed)/i)) {
+      console.log(`  ⏭️  Skipping action description: "${line}"`);
+      continue;
+    }
     
     if (line.match(jobKeywords) && line.length > 8 && line.length < 120 && 
         !line.startsWith('•') && !line.startsWith('-') &&
