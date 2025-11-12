@@ -255,57 +255,117 @@ const ResultsDashboard = () => {
               </h2>
               <div className="flex flex-wrap gap-2 sm:gap-3">
                 {cvData.technicalSkills.map((skill, index) => {
-                  // Map skill names to Skill Icons API format
-                  const getSkillIconName = (skillName) => {
-                    const lower = skillName.toLowerCase();
+                  // Comprehensive skill icon mapping using multiple APIs
+                  const getSkillIconUrl = (skillName) => {
+                    const lower = skillName.toLowerCase().trim();
                     
-                    // Popular technologies mapping
-                    const skillMap = {
-                      'javascript': 'js', 'typescript': 'ts', 'python': 'py',
-                      'java': 'java', 'c++': 'cpp', 'c#': 'cs', 'csharp': 'cs',
-                      'php': 'php', 'ruby': 'ruby', 'swift': 'swift', 'kotlin': 'kotlin',
-                      'go': 'go', 'golang': 'go', 'rust': 'rust', 'scala': 'scala',
-                      'react': 'react', 'reactjs': 'react', 'vue': 'vue', 'vuejs': 'vue',
-                      'angular': 'angular', 'angularjs': 'angular', 'svelte': 'svelte',
-                      'node': 'nodejs', 'nodejs': 'nodejs', 'node.js': 'nodejs',
-                      'express': 'express', 'expressjs': 'express', 'nextjs': 'nextjs',
-                      'next.js': 'nextjs', 'nuxt': 'nuxt', 'django': 'django',
+                    // Devicon API mapping (supports 150+ technologies)
+                    // Format: https://cdn.jsdelivr.net/gh/devicons/devicon/icons/{name}/{name}-original.svg
+                    const deviconMap = {
+                      // Programming Languages
+                      'javascript': 'javascript', 'js': 'javascript', 'typescript': 'typescript', 'ts': 'typescript',
+                      'python': 'python', 'py': 'python', 'java': 'java', 'c++': 'cplusplus', 'cpp': 'cplusplus',
+                      'c#': 'csharp', 'csharp': 'csharp', 'c': 'c', 'php': 'php', 'ruby': 'ruby',
+                      'swift': 'swift', 'kotlin': 'kotlin', 'go': 'go', 'golang': 'go', 'rust': 'rust',
+                      'scala': 'scala', 'perl': 'perl', 'r': 'r', 'matlab': 'matlab', 'julia': 'julia',
+                      
+                      // Frontend Frameworks
+                      'react': 'react', 'reactjs': 'react', 'vue': 'vuejs', 'vuejs': 'vuejs',
+                      'angular': 'angularjs', 'angularjs': 'angularjs', 'svelte': 'svelte',
+                      'nextjs': 'nextjs', 'next.js': 'nextjs', 'nuxt': 'nuxtjs', 'ember': 'ember',
+                      
+                      // Backend Frameworks
+                      'nodejs': 'nodejs', 'node.js': 'nodejs', 'node': 'nodejs',
+                      'express': 'express', 'expressjs': 'express', 'django': 'django',
                       'flask': 'flask', 'fastapi': 'fastapi', 'spring': 'spring',
-                      'html': 'html', 'html5': 'html', 'css': 'css', 'css3': 'css',
-                      'sass': 'sass', 'scss': 'sass', 'tailwind': 'tailwind',
-                      'tailwindcss': 'tailwind', 'bootstrap': 'bootstrap',
+                      'spring boot': 'spring', 'laravel': 'laravel', 'rails': 'rails',
+                      
+                      // Web Technologies
+                      'html': 'html5', 'html5': 'html5', 'css': 'css3', 'css3': 'css3',
+                      'sass': 'sass', 'scss': 'sass', 'less': 'less',
+                      'tailwind': 'tailwindcss', 'tailwindcss': 'tailwindcss',
+                      'bootstrap': 'bootstrap', 'materialize': 'materializecss',
+                      
+                      // DevOps & Tools
                       'docker': 'docker', 'kubernetes': 'kubernetes', 'k8s': 'kubernetes',
-                      'git': 'git', 'github': 'github', 'gitlab': 'gitlab',
-                      'aws': 'aws', 'azure': 'azure', 'gcp': 'gcp', 'firebase': 'firebase',
-                      'mongodb': 'mongodb', 'mongo': 'mongodb', 'postgresql': 'postgres',
-                      'postgres': 'postgres', 'mysql': 'mysql', 'redis': 'redis',
-                      'sqlite': 'sqlite', 'graphql': 'graphql', 'apollo': 'apollo',
-                      'redux': 'redux', 'webpack': 'webpack', 'vite': 'vite',
-                      'jest': 'jest', 'cypress': 'cypress', 'selenium': 'selenium',
-                      'tensorflow': 'tensorflow', 'pytorch': 'pytorch', 'sklearn': 'sklearn',
-                      'pandas': 'pandas', 'numpy': 'numpy', 'jupyter': 'jupyter',
-                      'photoshop': 'ps', 'adobe photoshop': 'ps', 'illustrator': 'ai',
-                      'adobe illustrator': 'ai', 'figma': 'figma', 'xd': 'xd',
-                      'premiere': 'pr', 'after effects': 'ae', 'blender': 'blender',
+                      'jenkins': 'jenkins', 'gitlab': 'gitlab', 'github': 'github',
+                      'git': 'git', 'bitbucket': 'bitbucket', 'terraform': 'terraform',
+                      'ansible': 'ansible', 'vagrant': 'vagrant', 'nginx': 'nginx',
+                      'apache': 'apache', 'linux': 'linux', 'ubuntu': 'ubuntu',
+                      'debian': 'debian', 'centos': 'centos', 'fedora': 'fedora',
+                      
+                      // Cloud Platforms
+                      'aws': 'amazonwebservices', 'amazon web services': 'amazonwebservices',
+                      'azure': 'azure', 'gcp': 'googlecloud', 'google cloud': 'googlecloud',
+                      'firebase': 'firebase', 'heroku': 'heroku', 'digitalocean': 'digitalocean',
+                      
+                      // Databases
+                      'mongodb': 'mongodb', 'mongo': 'mongodb', 'postgresql': 'postgresql',
+                      'postgres': 'postgresql', 'mysql': 'mysql', 'mariadb': 'mariadb',
+                      'redis': 'redis', 'sqlite': 'sqlite', 'oracle': 'oracle',
+                      'cassandra': 'cassandra', 'elasticsearch': 'elasticsearch',
+                      'dynamodb': 'dynamodb', 'couchdb': 'couchdb',
+                      
+                      // Design & CAD Tools
+                      'photoshop': 'photoshop', 'adobe photoshop': 'photoshop',
+                      'illustrator': 'illustrator', 'adobe illustrator': 'illustrator',
+                      'xd': 'xd', 'adobe xd': 'xd', 'figma': 'figma', 'sketch': 'sketch',
+                      'inkscape': 'inkscape', 'gimp': 'gimp', 'blender': 'blender',
+                      'autocad': 'autocad', 'solidworks': 'solidworks', 'catia': 'catia',
                       '3ds max': '3dsmax', '3d studio max': '3dsmax', '3dstudiomax': '3dsmax',
-                      'linux': 'linux', 'ubuntu': 'ubuntu', 'windows': 'windows',
-                      'vim': 'vim', 'vscode': 'vscode', 'visualstudio': 'visualstudio',
+                      'maya': 'maya', 'fusion 360': 'fusion360', 'revit': 'revit',
+                      
+                      // IDEs & Editors
+                      'vscode': 'vscode', 'visual studio code': 'vscode',
+                      'visualstudio': 'visualstudio', 'visual studio': 'visualstudio',
+                      'intellij': 'intellij', 'pycharm': 'pycharm', 'webstorm': 'webstorm',
+                      'atom': 'atom', 'sublime': 'sublime', 'vim': 'vim', 'emacs': 'emacs',
+                      'eclipse': 'eclipse', 'netbeans': 'netbeans',
+                      
+                      // Testing & Build Tools
+                      'jest': 'jest', 'mocha': 'mocha', 'jasmine': 'jasmine',
+                      'selenium': 'selenium', 'cypress': 'cypress', 'pytest': 'pytest',
+                      'junit': 'junit', 'webpack': 'webpack', 'vite': 'vitejs',
+                      'gulp': 'gulp', 'grunt': 'grunt', 'babel': 'babel',
+                      'npm': 'npm', 'yarn': 'yarn', 'pnpm': 'pnpm',
+                      
+                      // Data Science & ML
+                      'tensorflow': 'tensorflow', 'pytorch': 'pytorch', 'keras': 'keras',
+                      'pandas': 'pandas', 'numpy': 'numpy', 'jupyter': 'jupyter',
+                      'anaconda': 'anaconda', 'sklearn': 'scikitlearn', 'scikit-learn': 'scikitlearn',
+                      'opencv': 'opencv', 'matlab': 'matlab',
+                      
+                      // Microsoft Office
                       'word': 'word', 'excel': 'excel', 'powerpoint': 'powerpoint',
-                      'outlook': 'outlook'
+                      'outlook': 'outlook', 'office': 'office', 'microsoft office': 'office',
+                      
+                      // Mobile Development
+                      'android': 'android', 'flutter': 'flutter', 'react native': 'react',
+                      'ionic': 'ionic', 'xamarin': 'xamarin',
+                      
+                      // Other
+                      'graphql': 'graphql', 'apollo': 'apollographql', 'redux': 'redux',
+                      'jquery': 'jquery', 'wordpress': 'wordpress', 'drupal': 'drupal',
+                      'jira': 'jira', 'confluence': 'confluence', 'slack': 'slack',
+                      'trello': 'trello', 'notion': 'notion'
                     };
                     
                     // Check exact match first
-                    if (skillMap[lower]) return skillMap[lower];
+                    if (deviconMap[lower]) {
+                      return `https://cdn.jsdelivr.net/gh/devicons/devicon/icons/${deviconMap[lower]}/${deviconMap[lower]}-original.svg`;
+                    }
                     
                     // Check partial matches
-                    for (const [key, value] of Object.entries(skillMap)) {
-                      if (lower.includes(key)) return value;
+                    for (const [key, value] of Object.entries(deviconMap)) {
+                      if (lower.includes(key)) {
+                        return `https://cdn.jsdelivr.net/gh/devicons/devicon/icons/${value}/${value}-original.svg`;
+                      }
                     }
                     
                     return null; // No match found
                   };
 
-                  const iconName = getSkillIconName(skill);
+                  const iconUrl = getSkillIconUrl(skill);
                   
                   return (
                     <motion.div
@@ -316,18 +376,19 @@ const ResultsDashboard = () => {
                       className="group relative"
                     >
                       <div className="flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 sm:py-3 rounded-xl bg-gradient-to-r from-white to-blue-50 border-2 border-blue-200 hover:border-blue-400 hover:shadow-lg transition-all duration-300 cursor-pointer">
-                        {iconName ? (
+                        {iconUrl ? (
                           <img 
-                            src={`https://skillicons.dev/icons?i=${iconName}`}
+                            src={iconUrl}
                             alt={skill}
                             className="w-5 h-5 sm:w-6 sm:h-6 object-contain"
                             onError={(e) => {
+                              // Fallback to getTechIcon if image fails to load
                               e.target.style.display = 'none';
                               e.target.nextElementSibling.style.display = 'inline-flex';
                             }}
                           />
                         ) : null}
-                        <span className={iconName ? 'hidden' : 'inline-flex'}>{getTechIcon(skill, 'text-lg sm:text-xl')}</span>
+                        <span className={iconUrl ? 'hidden' : 'inline-flex'}>{getTechIcon(skill, 'text-lg sm:text-xl')}</span>
                         <span className="text-sm sm:text-base font-medium text-gray-700 group-hover:text-blue-700 transition-colors">
                           {skill}
                         </span>
