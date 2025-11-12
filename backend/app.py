@@ -245,17 +245,26 @@ def extract_cv_features(cv_data):
 
 def predict_job_matches(cv_data, top_k=10):
     """
-    Predict job matches using trained ML model
+    Predict job matches using trained ML model OR fallback to TF-IDF similarity
     Returns similarity scores between CV and all jobs
     """
-    if trained_model is None or tfidf_vectorizer is None or jobs_df is None:
-        raise HTTPException(status_code=500, detail="Model not loaded. Run train_model.py first!")
+    # Check if we have the dataset
+    if jobs_df is None:
+        raise HTTPException(status_code=500, detail="Jobs dataset not loaded!")
     
     # Extract CV text
     cv_text = extract_cv_features(cv_data)
     
-    # Create CV feature vector (same process as training)
-    
+    # If model is loaded, use it. Otherwise, use fallback method
+    if trained_model is not None and tfidf_vectorizer is not None:
+        print("✅ Using trained ML model for predictions")
+        return predict_with_trained_model(cv_data, cv_text, top_k)
+    else:
+        print("⚠️ Using fallback TF-IDF matching (no trained model)")
+        return predict_with_fallback(cv_data, cv_text, top_k)
+
+def predict_with_trained_model(cv_data, cv_text, top_k=10):
+    """Use the trained ML model for predictions"""
     # 1. TF-IDF features
     cv_tfidf = tfidf_vectorizer.transform([cv_text])
     
@@ -294,6 +303,63 @@ def predict_job_matches(cv_data, top_k=10):
     # Get top K matches
     top_indices = np.argsort(final_scores)[::-1][:top_k]
     
+    return build_matches_response(top_indices, final_scores, "ML Enhanced (TF-IDF + Skill Matching)")
+
+def predict_with_fallback(cv_data, cv_text, top_k=10):
+    """Fallback method using simple TF-IDF when trained model not available"""
+    from sklearn.feature_extraction.text import TfidfVectorizer
+    from sklearn.metrics.pairwise import cosine_similarity
+    
+    # Extract skills from CV
+    cv_skills_list = cv_data.get('skills', [])
+    if not cv_skills_list:
+        cv_skills_list = cv_data.get('technicalSkills', [])
+    cv_skills = set([s.lower() for s in cv_skills_list])
+    
+    # Create TF-IDF vectorizer on the fly
+    job_descriptions = jobs_df['Job Description'].fillna('')
+    
+    vectorizer = TfidfVectorizer(
+        max_features=500,
+        stop_words='english',
+        ngram_range=(1, 2)
+    )
+    
+    # Fit on both CV and job descriptions
+    all_texts = [cv_text] + job_descriptions.tolist()
+    vectorizer.fit(all_texts)
+    
+    # Transform CV and jobs
+    cv_vec = vectorizer.transform([cv_text])
+    jobs_vec = vectorizer.transform(job_descriptions)
+    
+    # Calculate TF-IDF similarity
+    tfidf_scores = cosine_similarity(cv_vec, jobs_vec)[0]
+    
+    # Add skill matching bonus
+    skill_bonuses = []
+    for desc in job_descriptions:
+        desc_lower = desc.lower()
+        # Count how many CV skills appear in job description
+        matches = sum(1 for skill in cv_skills if skill in desc_lower)
+        if len(cv_skills) > 0:
+            skill_bonus = matches / len(cv_skills)
+        else:
+            skill_bonus = 0
+        skill_bonuses.append(skill_bonus)
+    
+    skill_bonuses = np.array(skill_bonuses)
+    
+    # Combined score (60% TF-IDF, 40% skill matching)
+    final_scores = 0.6 * tfidf_scores + 0.4 * skill_bonuses
+    
+    # Get top K matches
+    top_indices = np.argsort(final_scores)[::-1][:top_k]
+    
+    return build_matches_response(top_indices, final_scores, "TF-IDF Similarity (Fallback Mode)")
+
+def build_matches_response(top_indices, final_scores, algorithm_name):
+    """Build the job matches response from indices and scores"""
     matches = []
     for idx in top_indices:
         job = jobs_df.iloc[idx]
