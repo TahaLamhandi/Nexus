@@ -318,33 +318,33 @@ const CVUpload = () => {
   };
 
   return (
-    <div className="min-h-screen py-12 px-4">
+    <div className="min-h-screen py-6 sm:py-12 px-3 sm:px-4">
       <div className="max-w-4xl mx-auto">
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="mb-8"
+          className="mb-6 sm:mb-8"
         >
           <motion.button
             onClick={() => navigate('/')}
-            className="group inline-flex items-center gap-2 px-4 py-2.5 mb-6 rounded-xl glass border border-gray-200/50 hover:border-primary-300 transition-all duration-300"
+            className="group inline-flex items-center gap-2 px-3 sm:px-4 py-2 sm:py-2.5 mb-4 sm:mb-6 rounded-xl glass border border-gray-200/50 hover:border-primary-300 transition-all duration-300"
             whileHover={{ x: -5 }}
             whileTap={{ scale: 0.95 }}
           >
-            <ArrowLeft size={18} className="text-gray-600 group-hover:text-primary-600 transition-colors" />
-            <span className="text-sm font-medium text-gray-700 group-hover:text-primary-700 transition-colors">
+            <ArrowLeft size={16} className="sm:w-[18px] sm:h-[18px] text-gray-600 group-hover:text-primary-600 transition-colors" />
+            <span className="text-xs sm:text-sm font-medium text-gray-700 group-hover:text-primary-700 transition-colors">
               Back to Home
             </span>
           </motion.button>
           
-          <div className="flex items-center gap-3 mb-2">
-            <Sparkles className="text-primary-600" size={32} />
-            <h1 className="text-4xl md:text-5xl font-bold gradient-text">
+          <div className="flex items-center gap-2 sm:gap-3 mb-2">
+            <Sparkles className="text-primary-600 w-6 h-6 sm:w-8 sm:h-8" />
+            <h1 className="text-2xl sm:text-4xl md:text-5xl font-bold gradient-text">
               Upload Your CV
             </h1>
           </div>
-          <p className="text-gray-600 text-lg">
+          <p className="text-gray-600 text-sm sm:text-base md:text-lg">
             Let our AI analyze your resume and predict your career potential
           </p>
         </motion.div>
@@ -355,7 +355,7 @@ const CVUpload = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
         >
-          <Card className="p-8 md:p-12">
+          <Card className="p-4 sm:p-8 md:p-12">
             {!isUploading && !uploadSuccess ? (
               <>
                 {/* Upload Area */}
@@ -365,7 +365,7 @@ const CVUpload = () => {
                   onDragLeave={handleDragLeave}
                   onDrop={handleDrop}
                   className={`
-                    relative border-3 border-dashed rounded-2xl p-12 transition-all duration-300
+                    relative border-3 border-dashed rounded-2xl p-6 sm:p-12 transition-all duration-300
                     ${isDragging 
                       ? 'border-primary-500 bg-primary-50 scale-105' 
                       : 'border-gray-300 hover:border-primary-400 hover:bg-gray-50'
@@ -387,18 +387,18 @@ const CVUpload = () => {
                       animate={isDragging ? { scale: 1.05 } : { scale: 1 }}
                     >
                       <motion.div
-                        className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-gradient-to-r from-primary-100 to-secondary-100 mb-6"
+                        className="inline-flex items-center justify-center w-14 h-14 sm:w-20 sm:h-20 rounded-full bg-gradient-to-r from-primary-100 to-secondary-100 mb-4 sm:mb-6"
                         animate={isDragging ? { rotate: 360 } : { rotate: 0 }}
                         transition={{ duration: 0.5 }}
                       >
-                        <Upload className="text-primary-600" size={40} />
+                        <Upload className="text-primary-600 w-7 h-7 sm:w-10 sm:h-10" />
                       </motion.div>
 
-                      <h3 className="text-2xl font-bold text-gray-800 mb-3">
+                      <h3 className="text-lg sm:text-2xl font-bold text-gray-800 mb-2 sm:mb-3">
                         {isDragging ? 'Drop your CV here' : 'Drag & drop your CV'}
                       </h3>
                       
-                      <p className="text-gray-600 mb-6">
+                      <p className="text-gray-600 text-sm sm:text-base mb-4 sm:mb-6">
                         or click to browse from your device
                       </p>
 
@@ -406,17 +406,17 @@ const CVUpload = () => {
                         <motion.span
                           whileHover={{ scale: 1.05 }}
                           whileTap={{ scale: 0.95 }}
-                          className="inline-flex items-center gap-2 px-8 py-4 text-lg rounded-full font-semibold bg-gradient-to-r from-primary-600 to-secondary-600 hover:from-primary-700 hover:to-secondary-700 text-white shadow-lg hover:shadow-xl transition-all duration-300"
+                          className="inline-flex items-center gap-2 px-6 py-3 sm:px-8 sm:py-4 text-base sm:text-lg rounded-full font-semibold bg-gradient-to-r from-primary-600 to-secondary-600 hover:from-primary-700 hover:to-secondary-700 text-white shadow-lg hover:shadow-xl transition-all duration-300"
                         >
                           Browse Files
                         </motion.span>
                       </label>
 
-                      <div className="mt-8 pt-6 border-t border-gray-200">
-                        <p className="text-sm text-gray-500 mb-2">
+                      <div className="mt-6 sm:mt-8 pt-4 sm:pt-6 border-t border-gray-200">
+                        <p className="text-xs sm:text-sm text-gray-500 mb-2">
                           Accepted formats: <span className="font-semibold text-gray-700">PDF, DOC, DOCX</span>
                         </p>
-                        <p className="text-sm text-gray-500">
+                        <p className="text-xs sm:text-sm text-gray-500">
                           Maximum file size: <span className="font-semibold text-gray-700">10MB</span>
                         </p>
                       </div>
@@ -425,26 +425,26 @@ const CVUpload = () => {
                     <motion.div
                       initial={{ opacity: 0, scale: 0.9 }}
                       animate={{ opacity: 1, scale: 1 }}
-                      className="flex items-center justify-between bg-white rounded-xl p-6 shadow-sm"
+                      className="flex items-center justify-between bg-white rounded-xl p-3 sm:p-6 shadow-sm"
                     >
-                      <div className="flex items-center gap-4 flex-1">
-                        <div className="w-12 h-12 rounded-lg bg-gradient-to-r from-green-400 to-emerald-500 flex items-center justify-center flex-shrink-0">
-                          <FileText className="text-white" size={24} />
+                      <div className="flex items-center gap-2 sm:gap-4 flex-1 min-w-0">
+                        <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg bg-gradient-to-r from-green-400 to-emerald-500 flex items-center justify-center flex-shrink-0">
+                          <FileText className="text-white w-5 h-5 sm:w-6 sm:h-6" />
                         </div>
                         <div className="flex-1 min-w-0">
-                          <p className="font-semibold text-gray-800 truncate">
+                          <p className="font-semibold text-sm sm:text-base text-gray-800 truncate">
                             {file.name}
                           </p>
-                          <p className="text-sm text-gray-500">
+                          <p className="text-xs sm:text-sm text-gray-500">
                             {formatFileSize(file.size)}
                           </p>
                         </div>
                       </div>
                       <button
                         onClick={removeFile}
-                        className="ml-4 p-2 hover:bg-red-50 rounded-full transition-colors group"
+                        className="ml-2 sm:ml-4 p-1.5 sm:p-2 hover:bg-red-50 rounded-full transition-colors group flex-shrink-0"
                       >
-                        <X className="text-gray-400 group-hover:text-red-500" size={20} />
+                        <X className="text-gray-400 group-hover:text-red-500 w-4 h-4 sm:w-5 sm:h-5" />
                       </button>
                     </motion.div>
                   )}
@@ -457,10 +457,10 @@ const CVUpload = () => {
                       initial={{ opacity: 0, y: -10 }}
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: -10 }}
-                      className="mt-4 p-4 bg-red-50 border border-red-200 rounded-lg flex items-center gap-3"
+                      className="mt-3 sm:mt-4 p-3 sm:p-4 bg-red-50 border border-red-200 rounded-lg flex items-start gap-2 sm:gap-3"
                     >
-                      <AlertCircle className="text-red-500 flex-shrink-0" size={20} />
-                      <p className="text-red-700 text-sm">{uploadError}</p>
+                      <AlertCircle className="text-red-500 flex-shrink-0 w-4 h-4 sm:w-5 sm:h-5 mt-0.5" />
+                      <p className="text-red-700 text-xs sm:text-sm">{uploadError}</p>
                     </motion.div>
                   )}
                 </AnimatePresence>
@@ -470,52 +470,52 @@ const CVUpload = () => {
                   <motion.div
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
-                    className="mt-6"
+                    className="mt-4 sm:mt-6"
                   >
                     <Button
                       onClick={handleUpload}
                       size="lg"
-                      className="w-full flex items-center justify-center"
+                      className="w-full flex items-center justify-center text-sm sm:text-base"
                     >
-                      <FileCheck size={20} className="mr-2" />
+                      <FileCheck size={18} className="mr-2" />
                       Analyze My CV
                     </Button>
                   </motion.div>
                 )}
               </>
             ) : isUploading ? (
-              <div className="text-center py-12">
+              <div className="text-center py-8 sm:py-12">
                 <Loader size="lg" text="Analyzing your CV with AI..." />
                 <motion.div
-                  className="mt-8 space-y-3"
+                  className="mt-6 sm:mt-8 space-y-2 sm:space-y-3"
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   transition={{ delay: 0.5 }}
                 >
-                  <div className="flex items-center justify-center gap-2 text-gray-600">
+                  <div className="flex items-center justify-center gap-2 text-gray-600 text-xs sm:text-base">
                     <motion.div
                       animate={{ scale: [1, 1.2, 1] }}
                       transition={{ duration: 1, repeat: Infinity }}
                     >
-                      <CheckCircle2 className="text-green-500" size={20} />
+                      <CheckCircle2 className="text-green-500 w-4 h-4 sm:w-5 sm:h-5" />
                     </motion.div>
                     <span>Extracting information...</span>
                   </div>
-                  <div className="flex items-center justify-center gap-2 text-gray-600">
+                  <div className="flex items-center justify-center gap-2 text-gray-600 text-xs sm:text-base">
                     <motion.div
                       animate={{ scale: [1, 1.2, 1] }}
                       transition={{ duration: 1, delay: 0.3, repeat: Infinity }}
                     >
-                      <CheckCircle2 className="text-green-500" size={20} />
+                      <CheckCircle2 className="text-green-500 w-4 h-4 sm:w-5 sm:h-5" />
                     </motion.div>
                     <span>Analyzing skills and experience...</span>
                   </div>
-                  <div className="flex items-center justify-center gap-2 text-gray-600">
+                  <div className="flex items-center justify-center gap-2 text-gray-600 text-xs sm:text-base">
                     <motion.div
                       animate={{ scale: [1, 1.2, 1] }}
                       transition={{ duration: 1, delay: 0.6, repeat: Infinity }}
                     >
-                      <CheckCircle2 className="text-green-500" size={20} />
+                      <CheckCircle2 className="text-green-500 w-4 h-4 sm:w-5 sm:h-5" />
                     </motion.div>
                     <span>Generating predictions...</span>
                   </div>
@@ -525,19 +525,19 @@ const CVUpload = () => {
               <motion.div
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
-                className="text-center py-12"
+                className="text-center py-8 sm:py-12"
               >
                 <motion.div
-                  className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-green-100 mb-6"
+                  className="inline-flex items-center justify-center w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-green-100 mb-4 sm:mb-6"
                   animate={{ scale: [1, 1.1, 1] }}
                   transition={{ duration: 0.5 }}
                 >
-                  <CheckCircle2 className="text-green-600" size={48} />
+                  <CheckCircle2 className="text-green-600 w-10 h-10 sm:w-12 sm:h-12" />
                 </motion.div>
-                <h3 className="text-2xl font-bold text-gray-800 mb-3">
+                <h3 className="text-xl sm:text-2xl font-bold text-gray-800 mb-2 sm:mb-3">
                   Upload Successful!
                 </h3>
-                <p className="text-gray-600 mb-6">
+                <p className="text-gray-600 text-sm sm:text-base mb-4 sm:mb-6">
                   Your CV has been analyzed. Redirecting to results...
                 </p>
               </motion.div>
@@ -551,7 +551,7 @@ const CVUpload = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
-            className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8"
+            className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6 mt-6 sm:mt-8"
           >
             {[
               {
@@ -570,12 +570,12 @@ const CVUpload = () => {
                 desc: 'Your data is encrypted and safe'
               }
             ].map((item, index) => (
-              <Card key={index} className="text-center p-6">
-                <div className="w-12 h-12 rounded-full bg-gradient-to-r from-primary-100 to-secondary-100 flex items-center justify-center mx-auto mb-4">
-                  <item.icon className="text-primary-600" size={24} />
+              <Card key={index} className="text-center p-4 sm:p-6">
+                <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-gradient-to-r from-primary-100 to-secondary-100 flex items-center justify-center mx-auto mb-3 sm:mb-4">
+                  <item.icon className="text-primary-600 w-5 h-5 sm:w-6 sm:h-6" />
                 </div>
-                <h3 className="font-bold text-gray-800 mb-2">{item.title}</h3>
-                <p className="text-sm text-gray-600">{item.desc}</p>
+                <h3 className="font-bold text-sm sm:text-base text-gray-800 mb-1 sm:mb-2">{item.title}</h3>
+                <p className="text-xs sm:text-sm text-gray-600">{item.desc}</p>
               </Card>
             ))}
           </motion.div>

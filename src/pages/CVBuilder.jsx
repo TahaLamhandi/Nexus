@@ -260,48 +260,49 @@ const CVBuilder = () => {
     <div className="min-h-screen bg-gradient-to-br from-primary-50 via-secondary-50 to-primary-100">
       {/* Header */}
       <div className="bg-white/80 backdrop-blur-md shadow-lg border-b border-primary-100">
-        <div className="max-w-7xl mx-auto px-6 py-6">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
+        <div className="max-w-7xl mx-auto px-3 sm:px-6 py-4 sm:py-6">
+          <div className="flex items-center justify-between flex-wrap gap-3 sm:gap-0">
+            <div className="flex items-center gap-2 sm:gap-4">
               <button
                 onClick={() => navigate('/')}
-                className="p-2.5 hover:bg-gradient-to-r from-primary-100 to-secondary-100 rounded-xl transition-all duration-300 hover:scale-105"
+                className="p-2 sm:p-2.5 hover:bg-gradient-to-r from-primary-100 to-secondary-100 rounded-xl transition-all duration-300 hover:scale-105"
               >
-                <ArrowLeft size={24} className="text-primary-600" />
+                <ArrowLeft className="w-5 h-5 sm:w-6 sm:h-6 text-primary-600" />
               </button>
               <div>
-                <h1 className="text-3xl font-bold bg-gradient-to-r from-primary-600 to-secondary-600 text-transparent bg-clip-text">
+                <h1 className="text-xl sm:text-3xl font-bold bg-gradient-to-r from-primary-600 to-secondary-600 text-transparent bg-clip-text">
                   CV Builder
                 </h1>
-                <p className="text-sm text-gray-600 mt-1">Create your professional CV in minutes</p>
+                <p className="text-xs sm:text-sm text-gray-600 mt-0.5 sm:mt-1">Create your professional CV in minutes</p>
               </div>
             </div>
             <button
               onClick={handleGenerateCV}
               disabled={!isPersonalInfoComplete()}
-              className={`flex items-center gap-2 px-8 py-3.5 rounded-xl font-semibold text-white transition-all duration-300 ${
+              className={`flex items-center gap-1.5 sm:gap-2 px-4 sm:px-8 py-2.5 sm:py-3.5 rounded-xl text-sm sm:text-base font-semibold text-white transition-all duration-300 ${
                 isPersonalInfoComplete()
                   ? 'bg-gradient-to-r from-primary-600 to-secondary-600 hover:shadow-2xl hover:shadow-primary-500/50 hover:scale-105 transform'
                   : 'bg-gray-300 cursor-not-allowed opacity-50'
               }`}
             >
-              <Download size={20} />
-              Generate CV
+              <Download className="w-4 h-4 sm:w-5 sm:h-5" />
+              <span className="hidden sm:inline">Generate CV</span>
+              <span className="sm:hidden">Generate</span>
             </button>
           </div>
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-6 py-8">
-        <div className="grid grid-cols-4 gap-6">
+      <div className="max-w-7xl mx-auto px-3 sm:px-6 py-4 sm:py-8">
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 sm:gap-6">
           {/* Sidebar Navigation */}
-          <div className="col-span-1">
-            <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-5 shadow-xl border border-primary-100 sticky top-6">
-              <h3 className="text-sm font-bold text-gray-700 mb-5 flex items-center gap-2">
-                <div className="w-1 h-5 bg-gradient-to-b from-primary-600 to-secondary-600 rounded-full"></div>
+          <div className="lg:col-span-1">
+            <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-3 sm:p-5 shadow-xl border border-primary-100 lg:sticky lg:top-6">
+              <h3 className="text-xs sm:text-sm font-bold text-gray-700 mb-3 sm:mb-5 flex items-center gap-2">
+                <div className="w-1 h-4 sm:h-5 bg-gradient-to-b from-primary-600 to-secondary-600 rounded-full"></div>
                 Sections
               </h3>
-              <div className="space-y-2">
+              <div className="grid grid-cols-3 lg:grid-cols-1 gap-2">
                 {sections.map((section) => {
                   const Icon = section.icon;
                   const isActive = activeSection === section.id;
@@ -319,22 +320,22 @@ const CVBuilder = () => {
                     <button
                       key={section.id}
                       onClick={() => setActiveSection(section.id)}
-                      className={`w-full flex items-center gap-3 px-4 py-3.5 rounded-xl transition-all duration-300 transform ${
+                      className={`w-full flex flex-col lg:flex-row items-center justify-center lg:justify-start gap-1 lg:gap-3 px-2 sm:px-4 py-2 sm:py-3.5 rounded-xl transition-all duration-300 transform ${
                         isActive
                           ? 'bg-gradient-to-r from-primary-100 to-secondary-100 border-2 border-primary-400 text-primary-700 shadow-md scale-105'
                           : 'bg-white border border-gray-200 text-gray-600 hover:border-primary-300 hover:shadow-sm'
                       }`}
                     >
-                      <Icon size={20} className={isActive ? 'text-primary-600' : ''} />
-                      <span className="text-sm font-medium flex-1 text-left">
+                      <Icon className={`w-4 h-4 sm:w-5 sm:h-5 ${isActive ? 'text-primary-600' : ''}`} />
+                      <span className="text-xs sm:text-sm font-medium flex-1 text-center lg:text-left">
                         {section.name}
                       </span>
                       {section.required && (
-                        <span className="text-xs text-red-500 font-bold">*</span>
+                        <span className="text-xs text-red-500 font-bold hidden lg:inline">*</span>
                       )}
                       {isComplete && (
-                        <div className="w-5 h-5 bg-green-100 rounded-full flex items-center justify-center">
-                          <Check size={14} className="text-green-600" />
+                        <div className="w-4 h-4 sm:w-5 sm:h-5 bg-green-100 rounded-full flex items-center justify-center absolute top-1 right-1 lg:relative lg:top-0 lg:right-0">
+                          <Check className="w-2.5 h-2.5 sm:w-3.5 sm:h-3.5 text-green-600" />
                         </div>
                       )}
                     </button>
@@ -345,28 +346,28 @@ const CVBuilder = () => {
           </div>
 
           {/* Main Content */}
-          <div className="col-span-3">
+          <div className="lg:col-span-3">
             <motion.div
               key={activeSection}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.3 }}
-              className="bg-white/90 backdrop-blur-sm rounded-2xl p-10 shadow-xl border border-primary-100"
+              className="bg-white/90 backdrop-blur-sm rounded-2xl p-4 sm:p-10 shadow-xl border border-primary-100"
             >
               {/* Personal Info Section */}
               {activeSection === 'personal' && (
                 <div>
-                  <div className="mb-8">
-                    <h2 className="text-2xl font-bold text-gray-800 mb-2">Personal Information</h2>
+                  <div className="mb-4 sm:mb-8">
+                    <h2 className="text-xl sm:text-2xl font-bold text-gray-800 mb-1 sm:mb-2">Personal Information</h2>
                     <p className="text-gray-500 text-sm">Enter your basic contact information</p>
                   </div>
 
                   {/* Personal Fields */}
-                  <div className="space-y-6">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="space-y-3 sm:space-y-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-6">
                       <div className="group">
-                        <label className="flex items-center gap-2 text-sm font-semibold text-gray-700 mb-2 group-focus-within:text-primary-600 transition-colors">
-                          <User size={18} className="text-primary-500" />
+                        <label className="flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm font-semibold text-gray-700 mb-1.5 sm:mb-2 group-focus-within:text-primary-600 transition-colors">
+                          <User className="w-4 h-4 sm:w-[18px] sm:h-[18px] text-primary-500" />
                           Full Name <span className="text-red-500">*</span>
                         </label>
                         <input
@@ -374,13 +375,13 @@ const CVBuilder = () => {
                           value={cvData.personal.fullName}
                           onChange={(e) => handlePersonalChange('fullName', e.target.value)}
                           placeholder="e.g., John Doe"
-                          className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-all hover:border-gray-300"
+                          className="w-full px-3 sm:px-4 py-2.5 sm:py-3 text-sm sm:text-base border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-all hover:border-gray-300"
                         />
                       </div>
 
                       <div className="group">
-                        <label className="flex items-center gap-2 text-sm font-semibold text-gray-700 mb-2 group-focus-within:text-primary-600 transition-colors">
-                          <Briefcase size={18} className="text-primary-500" />
+                        <label className="flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm font-semibold text-gray-700 mb-1.5 sm:mb-2 group-focus-within:text-primary-600 transition-colors">
+                          <Briefcase className="w-4 h-4 sm:w-[18px] sm:h-[18px] text-primary-500" />
                           Professional Title
                         </label>
                         <input
@@ -388,15 +389,15 @@ const CVBuilder = () => {
                           value={cvData.personal.title}
                           onChange={(e) => handlePersonalChange('title', e.target.value)}
                           placeholder="e.g., Software Engineer, Student"
-                          className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-all hover:border-gray-300"
+                          className="w-full px-3 sm:px-4 py-2.5 sm:py-3 text-sm sm:text-base border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-all hover:border-gray-300"
                         />
                       </div>
                     </div>
 
                     {/* Professional Summary - Full Width with spacing */}
-                    <div className="pt-4 pb-4">
-                      <label className="flex items-center gap-2 text-sm font-semibold text-gray-700 mb-3">
-                        <FileText size={18} className="text-primary-500" />
+                    <div className="pt-2 sm:pt-4 pb-2 sm:pb-4">
+                      <label className="flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm font-semibold text-gray-700 mb-2 sm:mb-3">
+                        <FileText className="w-4 h-4 sm:w-[18px] sm:h-[18px] text-primary-500" />
                         Professional Summary
                       </label>
                       <textarea
@@ -404,15 +405,15 @@ const CVBuilder = () => {
                         onChange={(e) => handlePersonalChange('summary', e.target.value)}
                         placeholder="Brief overview of your expertise, skills, and career objectives. This will appear at the top of your CV..."
                         rows="5"
-                        className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none resize-none transition-all hover:border-gray-300"
+                        className="w-full px-3 sm:px-4 py-2.5 sm:py-3 text-sm sm:text-base border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none resize-none transition-all hover:border-gray-300"
                       />
-                      <p className="text-xs text-gray-400 mt-2">Tip: Keep it concise and highlight your key strengths</p>
+                      <p className="text-xs text-gray-400 mt-1.5 sm:mt-2">Tip: Keep it concise and highlight your key strengths</p>
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-6">
                       <div className="group">
-                        <label className="flex items-center gap-2 text-sm font-semibold text-gray-700 mb-2 group-focus-within:text-primary-600 transition-colors">
-                          <Mail size={18} className="text-primary-500" />
+                        <label className="flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm font-semibold text-gray-700 mb-1.5 sm:mb-2 group-focus-within:text-primary-600 transition-colors">
+                          <Mail className="w-4 h-4 sm:w-[18px] sm:h-[18px] text-primary-500" />
                           Email <span className="text-red-500">*</span>
                         </label>
                         <input
@@ -420,13 +421,13 @@ const CVBuilder = () => {
                           value={cvData.personal.email}
                           onChange={(e) => handlePersonalChange('email', e.target.value)}
                           placeholder="john@example.com"
-                          className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-all hover:border-gray-300"
+                          className="w-full px-3 sm:px-4 py-2.5 sm:py-3 text-sm sm:text-base border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-all hover:border-gray-300"
                         />
                       </div>
 
                       <div className="group">
-                        <label className="flex items-center gap-2 text-sm font-semibold text-gray-700 mb-2 group-focus-within:text-primary-600 transition-colors">
-                          <Phone size={18} className="text-primary-500" />
+                        <label className="flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm font-semibold text-gray-700 mb-1.5 sm:mb-2 group-focus-within:text-primary-600 transition-colors">
+                          <Phone className="w-4 h-4 sm:w-[18px] sm:h-[18px] text-primary-500" />
                           Phone Number <span className="text-red-500">*</span>
                         </label>
                         <input
@@ -434,13 +435,13 @@ const CVBuilder = () => {
                           value={cvData.personal.phone}
                           onChange={(e) => handlePersonalChange('phone', e.target.value)}
                           placeholder="+1 234 567 8900"
-                          className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-all hover:border-gray-300"
+                          className="w-full px-3 sm:px-4 py-2.5 sm:py-3 text-sm sm:text-base border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-all hover:border-gray-300"
                         />
                       </div>
 
                       <div className="group">
-                        <label className="flex items-center gap-2 text-sm font-semibold text-gray-700 mb-2 group-focus-within:text-primary-600 transition-colors">
-                          <MapPin size={18} className="text-primary-500" />
+                        <label className="flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm font-semibold text-gray-700 mb-1.5 sm:mb-2 group-focus-within:text-primary-600 transition-colors">
+                          <MapPin className="w-4 h-4 sm:w-[18px] sm:h-[18px] text-primary-500" />
                           Location
                         </label>
                         <input
@@ -448,13 +449,13 @@ const CVBuilder = () => {
                           value={cvData.personal.location}
                           onChange={(e) => handlePersonalChange('location', e.target.value)}
                           placeholder="City, Country"
-                          className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-all hover:border-gray-300"
+                          className="w-full px-3 sm:px-4 py-2.5 sm:py-3 text-sm sm:text-base border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-all hover:border-gray-300"
                         />
                       </div>
 
                       <div className="group">
-                        <label className="flex items-center gap-2 text-sm font-semibold text-gray-700 mb-2 group-focus-within:text-primary-600 transition-colors">
-                          <Globe size={18} className="text-primary-500" />
+                        <label className="flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm font-semibold text-gray-700 mb-1.5 sm:mb-2 group-focus-within:text-primary-600 transition-colors">
+                          <Globe className="w-4 h-4 sm:w-[18px] sm:h-[18px] text-primary-500" />
                           LinkedIn URL
                         </label>
                         <input
@@ -462,13 +463,13 @@ const CVBuilder = () => {
                           value={cvData.personal.linkedin}
                           onChange={(e) => handlePersonalChange('linkedin', e.target.value)}
                           placeholder="linkedin.com/in/johndoe"
-                          className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-all hover:border-gray-300"
+                          className="w-full px-3 sm:px-4 py-2.5 sm:py-3 text-sm sm:text-base border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-all hover:border-gray-300"
                         />
                       </div>
 
                       <div className="group">
-                        <label className="flex items-center gap-2 text-sm font-semibold text-gray-700 mb-2 group-focus-within:text-primary-600 transition-colors">
-                          <Code size={18} className="text-primary-500" />
+                        <label className="flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm font-semibold text-gray-700 mb-1.5 sm:mb-2 group-focus-within:text-primary-600 transition-colors">
+                          <Code className="w-4 h-4 sm:w-[18px] sm:h-[18px] text-primary-500" />
                           GitHub URL
                         </label>
                         <input
@@ -476,13 +477,13 @@ const CVBuilder = () => {
                           value={cvData.personal.github}
                           onChange={(e) => handlePersonalChange('github', e.target.value)}
                           placeholder="github.com/johndoe"
-                          className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-all hover:border-gray-300"
+                          className="w-full px-3 sm:px-4 py-2.5 sm:py-3 text-sm sm:text-base border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-all hover:border-gray-300"
                         />
                       </div>
 
                       <div className="group">
-                        <label className="flex items-center gap-2 text-sm font-semibold text-gray-700 mb-2 group-focus-within:text-primary-600 transition-colors">
-                          <Globe size={18} className="text-primary-500" />
+                        <label className="flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm font-semibold text-gray-700 mb-1.5 sm:mb-2 group-focus-within:text-primary-600 transition-colors">
+                          <Globe className="w-4 h-4 sm:w-[18px] sm:h-[18px] text-primary-500" />
                           Website/Portfolio
                         </label>
                         <input
@@ -501,36 +502,36 @@ const CVBuilder = () => {
               {/* Education Section */}
               {activeSection === 'education' && (
                 <div>
-                  <div className="flex items-center justify-between mb-6">
-                    <h2 className="text-xl font-bold text-gray-800">Education</h2>
+                  <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-0 mb-4 sm:mb-6">
+                    <h2 className="text-lg sm:text-xl font-bold text-gray-800">Education</h2>
                     <button
                       onClick={addEducation}
-                      className="flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors"
+                      className="flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 text-sm sm:text-base bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors"
                     >
-                      <Plus size={20} />
+                      <Plus className="w-4 h-4 sm:w-5 sm:h-5" />
                       Add Education
                     </button>
                   </div>
 
                   {cvData.education.length === 0 ? (
-                    <div className="text-center py-12 text-gray-500">
-                      <GraduationCap size={48} className="mx-auto mb-4 text-gray-300" />
-                      <p>No education added yet. Click "Add Education" to start.</p>
+                    <div className="text-center py-8 sm:py-12 text-gray-500">
+                      <GraduationCap className="w-10 h-10 sm:w-12 sm:h-12 mx-auto mb-3 sm:mb-4 text-gray-300" />
+                      <p className="text-sm sm:text-base">No education added yet. Click "Add Education" to start.</p>
                     </div>
                   ) : (
-                    <div className="space-y-6">
+                    <div className="space-y-3 sm:space-y-6">
                       {cvData.education.map((edu) => (
-                        <div key={edu.id} className="p-6 border-2 border-gray-200 rounded-lg relative">
+                        <div key={edu.id} className="p-3 sm:p-6 border-2 border-gray-200 rounded-lg relative">
                           <button
                             onClick={() => removeEducation(edu.id)}
-                            className="absolute top-4 right-4 p-2 text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+                            className="absolute top-2 right-2 sm:top-4 sm:right-4 p-1.5 sm:p-2 text-red-500 hover:bg-red-50 rounded-lg transition-colors"
                           >
-                            <Trash2 size={20} />
+                            <Trash2 className="w-4 h-4 sm:w-5 sm:h-5" />
                           </button>
 
-                          <div className="grid grid-cols-2 gap-4">
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                             <div>
-                              <label className="block text-sm font-semibold text-gray-700 mb-2">
+                              <label className="block text-xs sm:text-sm font-semibold text-gray-700 mb-1.5 sm:mb-2">
                                 Degree <span className="text-red-500">*</span>
                               </label>
                               <input
@@ -538,12 +539,12 @@ const CVBuilder = () => {
                                 value={edu.degree}
                                 onChange={(e) => updateEducation(edu.id, 'degree', e.target.value)}
                                 placeholder="Bachelor of Science"
-                                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 outline-none"
+                                className="w-full px-3 sm:px-4 py-2.5 sm:py-3 text-sm sm:text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 outline-none"
                               />
                             </div>
 
                             <div>
-                              <label className="block text-sm font-semibold text-gray-700 mb-2">
+                              <label className="block text-xs sm:text-sm font-semibold text-gray-700 mb-1.5 sm:mb-2">
                                 Institution <span className="text-red-500">*</span>
                               </label>
                               <input
@@ -551,12 +552,12 @@ const CVBuilder = () => {
                                 value={edu.institution}
                                 onChange={(e) => updateEducation(edu.id, 'institution', e.target.value)}
                                 placeholder="University Name"
-                                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 outline-none"
+                                className="w-full px-3 sm:px-4 py-2.5 sm:py-3 text-sm sm:text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 outline-none"
                               />
                             </div>
 
                             <div>
-                              <label className="block text-sm font-semibold text-gray-700 mb-2">
+                              <label className="block text-xs sm:text-sm font-semibold text-gray-700 mb-1.5 sm:mb-2">
                                 Location
                               </label>
                               <input
@@ -564,7 +565,7 @@ const CVBuilder = () => {
                                 value={edu.location}
                                 onChange={(e) => updateEducation(edu.id, 'location', e.target.value)}
                                 placeholder="City, Country"
-                                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 outline-none"
+                                className="w-full px-3 sm:px-4 py-2.5 sm:py-3 text-sm sm:text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 outline-none"
                               />
                             </div>
 
