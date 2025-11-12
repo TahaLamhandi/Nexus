@@ -435,33 +435,33 @@ const ResultsDashboard = () => {
                           </div>
                         </div>
                         <div className="ml-2 sm:ml-4 flex-shrink-0">
-                          <div className="flex flex-col items-center">
-                            <div className="text-lg sm:text-2xl font-bold text-primary-600">
-                              {job.matchScore}%
+                          <div className="flex flex-col items-center min-w-[50px] sm:min-w-[60px]">
+                            <div className="text-base sm:text-2xl font-bold text-primary-600 whitespace-nowrap">
+                              {typeof job.matchScore === 'number' ? job.matchScore.toFixed(2) : job.matchScore}%
                             </div>
-                            <div className="text-xs text-gray-500">Match</div>
+                            <div className="text-xs text-gray-500 whitespace-nowrap">Match</div>
                           </div>
                         </div>
                       </div>
                       
                       {/* Job Details */}
-                      <div className="space-y-2 mb-4">
+                      <div className="space-y-1.5 sm:space-y-2 mb-3 sm:mb-4">
                         {job.Location && (
-                          <div className="flex items-center gap-2 text-sm text-gray-600">
-                            <MapPin size={14} />
-                            <span>{job.Location}</span>
+                          <div className="flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm text-gray-600">
+                            <MapPin className="w-3.5 h-3.5 sm:w-[14px] sm:h-[14px] flex-shrink-0" />
+                            <span className="truncate">{job.Location}</span>
                           </div>
                         )}
                         {job.Work_Type && job.Work_Type !== 'Not specified' && (
-                          <div className="flex items-center gap-2 text-sm text-gray-600">
-                            <Briefcase size={14} />
-                            <span>{job.Work_Type}</span>
+                          <div className="flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm text-gray-600">
+                            <Briefcase className="w-3.5 h-3.5 sm:w-[14px] sm:h-[14px] flex-shrink-0" />
+                            <span className="truncate">{job.Work_Type}</span>
                           </div>
                         )}
                         {job.Experience_Level && (
-                          <div className="flex items-center gap-2 text-sm text-gray-600">
-                            <Award size={14} />
-                            <span>{job.Experience_Level}</span>
+                          <div className="flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm text-gray-600">
+                            <Award className="w-3.5 h-3.5 sm:w-[14px] sm:h-[14px] flex-shrink-0" />
+                            <span className="truncate">{job.Experience_Level}</span>
                           </div>
                         )}
                       </div>
@@ -472,10 +472,11 @@ const ResultsDashboard = () => {
                           href={job.LinkedIn_URL}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="inline-flex items-center gap-2 px-4 py-2 bg-[#0A66C2] text-white rounded-lg hover:bg-[#004182] transition-colors text-sm font-medium"
+                          className="inline-flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 bg-[#0A66C2] text-white rounded-lg hover:bg-[#004182] transition-colors text-xs sm:text-sm font-medium"
                         >
-                          <SiLinkedin size={16} />
-                          View on LinkedIn
+                          <SiLinkedin className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                          <span className="hidden sm:inline">View on LinkedIn</span>
+                          <span className="sm:hidden">LinkedIn</span>
                         </a>
                       )}
                     </div>

@@ -569,34 +569,36 @@ const CVBuilder = () => {
                               />
                             </div>
 
-                            <div className="grid grid-cols-2 gap-2">
-                              <div>
-                                <label className="block text-sm font-semibold text-gray-700 mb-2">
-                                  Start Date
-                                </label>
-                                <input
-                                  type="month"
-                                  value={edu.startDate}
-                                  onChange={(e) => updateEducation(edu.id, 'startDate', e.target.value)}
-                                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 outline-none"
-                                />
-                              </div>
+                            <div className="sm:col-span-2">
+                              <div className="grid grid-cols-2 gap-2 sm:gap-3">
+                                <div>
+                                  <label className="block text-xs sm:text-sm font-semibold text-gray-700 mb-1.5 sm:mb-2">
+                                    Start Date
+                                  </label>
+                                  <input
+                                    type="month"
+                                    value={edu.startDate}
+                                    onChange={(e) => updateEducation(edu.id, 'startDate', e.target.value)}
+                                    className="w-full px-2 sm:px-4 py-2 sm:py-3 text-sm sm:text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 outline-none"
+                                  />
+                                </div>
 
-                              <div>
-                                <label className="block text-sm font-semibold text-gray-700 mb-2">
-                                  End Date
-                                </label>
-                                <input
-                                  type="month"
-                                  value={edu.endDate}
-                                  onChange={(e) => updateEducation(edu.id, 'endDate', e.target.value)}
-                                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 outline-none"
-                                />
+                                <div>
+                                  <label className="block text-xs sm:text-sm font-semibold text-gray-700 mb-1.5 sm:mb-2">
+                                    End Date
+                                  </label>
+                                  <input
+                                    type="month"
+                                    value={edu.endDate}
+                                    onChange={(e) => updateEducation(edu.id, 'endDate', e.target.value)}
+                                    className="w-full px-2 sm:px-4 py-2 sm:py-3 text-sm sm:text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 outline-none"
+                                  />
+                                </div>
                               </div>
                             </div>
 
-                            <div className="col-span-2">
-                              <label className="block text-sm font-semibold text-gray-700 mb-2">
+                            <div className="sm:col-span-2">
+                              <label className="block text-xs sm:text-sm font-semibold text-gray-700 mb-1.5 sm:mb-2">
                                 Description
                               </label>
                               <textarea
@@ -604,7 +606,7 @@ const CVBuilder = () => {
                                 onChange={(e) => updateEducation(edu.id, 'description', e.target.value)}
                                 placeholder="Relevant coursework, achievements, GPA, etc."
                                 rows={3}
-                                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 outline-none resize-none"
+                                className="w-full px-3 sm:px-4 py-2.5 sm:py-3 text-sm sm:text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 outline-none resize-none"
                               />
                             </div>
                           </div>
@@ -618,39 +620,39 @@ const CVBuilder = () => {
               {/* Experience Section */}
               {activeSection === 'experience' && (
                 <div>
-                  <div className="flex items-center justify-between mb-6">
+                  <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-0 mb-4 sm:mb-6">
                     <div>
-                      <h2 className="text-xl font-bold text-gray-800">Work Experience</h2>
-                      <p className="text-sm text-gray-600 mt-1">Optional - Skip if you don't have experience</p>
+                      <h2 className="text-lg sm:text-xl font-bold text-gray-800">Work Experience</h2>
+                      <p className="text-xs sm:text-sm text-gray-600 mt-1">Optional - Skip if you don't have experience</p>
                     </div>
                     <button
                       onClick={addExperience}
-                      className="flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors"
+                      className="flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 text-sm sm:text-base bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors"
                     >
-                      <Plus size={20} />
+                      <Plus className="w-4 h-4 sm:w-5 sm:h-5" />
                       Add Experience
                     </button>
                   </div>
 
                   {cvData.experience.length === 0 ? (
-                    <div className="text-center py-12 text-gray-500">
-                      <Briefcase size={48} className="mx-auto mb-4 text-gray-300" />
-                      <p>No experience added. This section is optional.</p>
+                    <div className="text-center py-8 sm:py-12 text-gray-500">
+                      <Briefcase className="w-10 h-10 sm:w-12 sm:h-12 mx-auto mb-3 sm:mb-4 text-gray-300" />
+                      <p className="text-sm sm:text-base">No experience added. This section is optional.</p>
                     </div>
                   ) : (
-                    <div className="space-y-6">
+                    <div className="space-y-3 sm:space-y-6">
                       {cvData.experience.map((exp) => (
-                        <div key={exp.id} className="p-6 border-2 border-gray-200 rounded-lg relative">
+                        <div key={exp.id} className="p-3 sm:p-6 border-2 border-gray-200 rounded-lg relative">
                           <button
                             onClick={() => removeExperience(exp.id)}
-                            className="absolute top-4 right-4 p-2 text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+                            className="absolute top-2 right-2 sm:top-4 sm:right-4 p-1.5 sm:p-2 text-red-500 hover:bg-red-50 rounded-lg transition-colors"
                           >
-                            <Trash2 size={20} />
+                            <Trash2 className="w-4 h-4 sm:w-5 sm:h-5" />
                           </button>
 
-                          <div className="grid grid-cols-2 gap-4">
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                             <div>
-                              <label className="block text-sm font-semibold text-gray-700 mb-2">
+                              <label className="block text-xs sm:text-sm font-semibold text-gray-700 mb-1.5 sm:mb-2">
                                 Position
                               </label>
                               <input
@@ -658,12 +660,12 @@ const CVBuilder = () => {
                                 value={exp.position}
                                 onChange={(e) => updateExperience(exp.id, 'position', e.target.value)}
                                 placeholder="Software Engineer"
-                                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 outline-none"
+                                className="w-full px-3 sm:px-4 py-2.5 sm:py-3 text-sm sm:text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 outline-none"
                               />
                             </div>
 
                             <div>
-                              <label className="block text-sm font-semibold text-gray-700 mb-2">
+                              <label className="block text-xs sm:text-sm font-semibold text-gray-700 mb-1.5 sm:mb-2">
                                 Company
                               </label>
                               <input
@@ -671,12 +673,12 @@ const CVBuilder = () => {
                                 value={exp.company}
                                 onChange={(e) => updateExperience(exp.id, 'company', e.target.value)}
                                 placeholder="Company Name"
-                                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 outline-none"
+                                className="w-full px-3 sm:px-4 py-2.5 sm:py-3 text-sm sm:text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 outline-none"
                               />
                             </div>
 
                             <div>
-                              <label className="block text-sm font-semibold text-gray-700 mb-2">
+                              <label className="block text-xs sm:text-sm font-semibold text-gray-700 mb-1.5 sm:mb-2">
                                 Location
                               </label>
                               <input
@@ -684,39 +686,41 @@ const CVBuilder = () => {
                                 value={exp.location}
                                 onChange={(e) => updateExperience(exp.id, 'location', e.target.value)}
                                 placeholder="City, Country"
-                                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 outline-none"
+                                className="w-full px-3 sm:px-4 py-2.5 sm:py-3 text-sm sm:text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 outline-none"
                               />
                             </div>
 
-                            <div className="grid grid-cols-2 gap-2">
-                              <div>
-                                <label className="block text-sm font-semibold text-gray-700 mb-2">
-                                  Start Date
-                                </label>
-                                <input
-                                  type="month"
-                                  value={exp.startDate}
-                                  onChange={(e) => updateExperience(exp.id, 'startDate', e.target.value)}
-                                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 outline-none"
-                                />
-                              </div>
+                            <div className="sm:col-span-1">
+                              <div className="grid grid-cols-2 gap-2 sm:gap-3">
+                                <div>
+                                  <label className="block text-xs sm:text-sm font-semibold text-gray-700 mb-1.5 sm:mb-2">
+                                    Start Date
+                                  </label>
+                                  <input
+                                    type="month"
+                                    value={exp.startDate}
+                                    onChange={(e) => updateExperience(exp.id, 'startDate', e.target.value)}
+                                    className="w-full px-2 sm:px-4 py-2 sm:py-3 text-sm sm:text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 outline-none"
+                                  />
+                                </div>
 
-                              <div>
-                                <label className="block text-sm font-semibold text-gray-700 mb-2">
-                                  End Date
-                                </label>
-                                <input
-                                  type="month"
-                                  value={exp.endDate}
-                                  onChange={(e) => updateExperience(exp.id, 'endDate', e.target.value)}
-                                  disabled={exp.current}
-                                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 outline-none disabled:bg-gray-100"
-                                />
+                                <div>
+                                  <label className="block text-xs sm:text-sm font-semibold text-gray-700 mb-1.5 sm:mb-2">
+                                    End Date
+                                  </label>
+                                  <input
+                                    type="month"
+                                    value={exp.endDate}
+                                    onChange={(e) => updateExperience(exp.id, 'endDate', e.target.value)}
+                                    disabled={exp.current}
+                                    className="w-full px-2 sm:px-4 py-2 sm:py-3 text-sm sm:text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 outline-none disabled:bg-gray-100"
+                                  />
+                                </div>
                               </div>
                             </div>
 
-                            <div className="col-span-2">
-                              <label className="flex items-center gap-2 text-sm font-semibold text-gray-700">
+                            <div className="sm:col-span-2">
+                              <label className="flex items-center gap-2 text-xs sm:text-sm font-semibold text-gray-700">
                                 <input
                                   type="checkbox"
                                   checked={exp.current}
@@ -727,8 +731,8 @@ const CVBuilder = () => {
                               </label>
                             </div>
 
-                            <div className="col-span-2">
-                              <label className="block text-sm font-semibold text-gray-700 mb-2">
+                            <div className="sm:col-span-2">
+                              <label className="block text-xs sm:text-sm font-semibold text-gray-700 mb-1.5 sm:mb-2">
                                 Description
                               </label>
                               <textarea
@@ -736,7 +740,7 @@ const CVBuilder = () => {
                                 onChange={(e) => updateExperience(exp.id, 'description', e.target.value)}
                                 placeholder="Describe your responsibilities and achievements..."
                                 rows={4}
-                                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 outline-none resize-none"
+                                className="w-full px-3 sm:px-4 py-2.5 sm:py-3 text-sm sm:text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 outline-none resize-none"
                               />
                             </div>
                           </div>
@@ -750,39 +754,39 @@ const CVBuilder = () => {
               {/* Projects Section */}
               {activeSection === 'projects' && (
                 <div>
-                  <div className="flex items-center justify-between mb-6">
+                  <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-0 mb-4 sm:mb-6">
                     <div>
-                      <h2 className="text-xl font-bold text-gray-800">Projects</h2>
-                      <p className="text-sm text-gray-600 mt-1">Optional - Showcase your work</p>
+                      <h2 className="text-lg sm:text-xl font-bold text-gray-800">Projects</h2>
+                      <p className="text-xs sm:text-sm text-gray-600 mt-1">Optional - Showcase your work</p>
                     </div>
                     <button
                       onClick={addProject}
-                      className="flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors"
+                      className="flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 text-sm sm:text-base bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors"
                     >
-                      <Plus size={20} />
+                      <Plus className="w-4 h-4 sm:w-5 sm:h-5" />
                       Add Project
                     </button>
                   </div>
 
                   {cvData.projects.length === 0 ? (
-                    <div className="text-center py-12 text-gray-500">
-                      <Rocket size={48} className="mx-auto mb-4 text-gray-300" />
-                      <p>No projects added. This section is optional.</p>
+                    <div className="text-center py-8 sm:py-12 text-gray-500">
+                      <Rocket className="w-10 h-10 sm:w-12 sm:h-12 mx-auto mb-3 sm:mb-4 text-gray-300" />
+                      <p className="text-sm sm:text-base">No projects added. This section is optional.</p>
                     </div>
                   ) : (
-                    <div className="space-y-6">
+                    <div className="space-y-3 sm:space-y-6">
                       {cvData.projects.map((proj) => (
-                        <div key={proj.id} className="p-6 border-2 border-gray-200 rounded-lg relative">
+                        <div key={proj.id} className="p-3 sm:p-6 border-2 border-gray-200 rounded-lg relative">
                           <button
                             onClick={() => removeProject(proj.id)}
-                            className="absolute top-4 right-4 p-2 text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+                            className="absolute top-2 right-2 sm:top-4 sm:right-4 p-1.5 sm:p-2 text-red-500 hover:bg-red-50 rounded-lg transition-colors"
                           >
-                            <Trash2 size={20} />
+                            <Trash2 className="w-4 h-4 sm:w-5 sm:h-5" />
                           </button>
 
-                          <div className="grid grid-cols-2 gap-4">
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                             <div>
-                              <label className="block text-sm font-semibold text-gray-700 mb-2">
+                              <label className="block text-xs sm:text-sm font-semibold text-gray-700 mb-1.5 sm:mb-2">
                                 Project Name
                               </label>
                               <input
@@ -790,12 +794,12 @@ const CVBuilder = () => {
                                 value={proj.name}
                                 onChange={(e) => updateProject(proj.id, 'name', e.target.value)}
                                 placeholder="E-commerce Platform"
-                                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 outline-none"
+                                className="w-full px-3 sm:px-4 py-2.5 sm:py-3 text-sm sm:text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 outline-none"
                               />
                             </div>
 
                             <div>
-                              <label className="block text-sm font-semibold text-gray-700 mb-2">
+                              <label className="block text-xs sm:text-sm font-semibold text-gray-700 mb-1.5 sm:mb-2">
                                 Technologies Used
                               </label>
                               <input
@@ -803,12 +807,12 @@ const CVBuilder = () => {
                                 value={proj.technologies}
                                 onChange={(e) => updateProject(proj.id, 'technologies', e.target.value)}
                                 placeholder="React, Node.js, MongoDB"
-                                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 outline-none"
+                                className="w-full px-3 sm:px-4 py-2.5 sm:py-3 text-sm sm:text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 outline-none"
                               />
                             </div>
 
-                            <div className="col-span-2">
-                              <label className="block text-sm font-semibold text-gray-700 mb-2">
+                            <div className="sm:col-span-2">
+                              <label className="block text-xs sm:text-sm font-semibold text-gray-700 mb-1.5 sm:mb-2">
                                 Project Link (Optional)
                               </label>
                               <input
@@ -816,12 +820,12 @@ const CVBuilder = () => {
                                 value={proj.link}
                                 onChange={(e) => updateProject(proj.id, 'link', e.target.value)}
                                 placeholder="https://github.com/..."
-                                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 outline-none"
+                                className="w-full px-3 sm:px-4 py-2.5 sm:py-3 text-sm sm:text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 outline-none"
                               />
                             </div>
 
-                            <div className="col-span-2">
-                              <label className="block text-sm font-semibold text-gray-700 mb-2">
+                            <div className="sm:col-span-2">
+                              <label className="block text-xs sm:text-sm font-semibold text-gray-700 mb-1.5 sm:mb-2">
                                 Description
                               </label>
                               <textarea
@@ -829,7 +833,7 @@ const CVBuilder = () => {
                                 onChange={(e) => updateProject(proj.id, 'description', e.target.value)}
                                 placeholder="Describe what the project does and your role..."
                                 rows={3}
-                                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 outline-none resize-none"
+                                className="w-full px-3 sm:px-4 py-2.5 sm:py-3 text-sm sm:text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 outline-none resize-none"
                               />
                             </div>
                           </div>
@@ -843,27 +847,27 @@ const CVBuilder = () => {
               {/* Skills Section */}
               {activeSection === 'skills' && (
                 <div>
-                  <h2 className="text-xl font-bold text-gray-800 mb-6">Skills & Languages</h2>
+                  <h2 className="text-lg sm:text-xl font-bold text-gray-800 mb-4 sm:mb-6">Skills & Languages</h2>
 
                   {/* Technical Skills */}
-                  <div className="mb-8">
-                    <label className="block text-sm font-semibold text-gray-700 mb-3">
+                  <div className="mb-6 sm:mb-8">
+                    <label className="block text-xs sm:text-sm font-semibold text-gray-700 mb-2 sm:mb-3">
                       Technical Skills
                     </label>
-                    <div className="flex gap-2 mb-4">
+                    <div className="flex gap-2 mb-3 sm:mb-4">
                       <input
                         type="text"
                         value={newSkill}
                         onChange={(e) => setNewSkill(e.target.value)}
                         onKeyPress={(e) => e.key === 'Enter' && addSkill()}
                         placeholder="e.g., JavaScript, Python, React..."
-                        className="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 outline-none"
+                        className="flex-1 px-3 sm:px-4 py-2.5 sm:py-3 text-sm sm:text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 outline-none"
                       />
                       <button
                         onClick={addSkill}
-                        className="px-6 py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors"
+                        className="px-4 sm:px-6 py-2.5 sm:py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors"
                       >
-                        <Plus size={20} />
+                        <Plus className="w-4 h-4 sm:w-5 sm:h-5" />
                       </button>
                     </div>
 
