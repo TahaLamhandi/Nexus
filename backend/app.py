@@ -411,18 +411,23 @@ def build_matches_response(top_indices, final_scores, algorithm_name):
 async def startup_event():
     """Load model and data on startup"""
     print("\n" + "="*60)
-    print("🚀 STARTING NEXUS API (ML ENHANCED)")
+    print("🚀 STARTING NEXUS API v2.1.0 (ML ENHANCED + FALLBACK)")
     print("="*60)
+    print(f"📂 Current working directory: {os.getcwd()}")
+    print(f"📂 Files in current directory: {os.listdir('.')}")
     
     model_loaded = load_latest_model()
     data_loaded = load_jobs_dataset()
     
     if not model_loaded:
         print("⚠️ WARNING: No trained model loaded!")
-        print("   Run: python train_model.py")
+        print("   Will use fallback TF-IDF matching")
     
     if not data_loaded:
-        print("⚠️ WARNING: No jobs dataset loaded!")
+        print("❌ CRITICAL: No jobs dataset loaded!")
+        print("   Application will not function properly")
+    else:
+        print(f"✅ Backend ready with {len(jobs_df)} jobs")
     
     print("="*60 + "\n")
 
