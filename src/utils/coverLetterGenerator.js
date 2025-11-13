@@ -1,26 +1,14 @@
 import { jsPDF } from 'jspdf';
 
 /**
- * Fetch company logo from Clearbit API
+ * Fetch company logo using Google Favicon API
  * @param {string} companyName - Name of the company
- * @returns {Promise<string|null>} - Logo URL or null
+ * @returns {string} - Logo URL
  */
-const fetchCompanyLogo = async (companyName) => {
-  try {
-    // Try Clearbit Logo API
-    const domain = companyName.toLowerCase().replace(/\s+/g, '') + '.com';
-    const logoUrl = `https://logo.clearbit.com/${domain}`;
-    
-    // Check if logo exists
-    const response = await fetch(logoUrl);
-    if (response.ok) {
-      return logoUrl;
-    }
-    return null;
-  } catch (error) {
-    console.log('Could not fetch company logo:', error);
-    return null;
-  }
+const fetchCompanyLogo = (companyName) => {
+  // Use Google's favicon service which is very reliable
+  const domain = companyName.toLowerCase().replace(/\s+/g, '') + '.com';
+  return `https://www.google.com/s2/favicons?domain=${domain}&sz=128`;
 };
 
 /**
@@ -59,24 +47,36 @@ export const generateCoverLetter = async ({
   const pageHeight = doc.internal.pageSize.getHeight();
   let yPos = 20;
   
-  // Try to fetch company logo
-  const logoUrl = await fetchCompanyLogo(companyName);
+  // Get company logo URL (Google Favicon API - always available)
+  const logoUrl = fetchCompanyLogo(companyName);
   
-  // ===== COMPANY LOGO (if available) =====
+  // ===== COMPANY LOGO =====
   if (logoUrl) {
     try {
+      // Create image element and load logo
       const img = new Image();
       img.crossOrigin = 'anonymous';
+      
+      // Use async/await to ensure logo loads before continuing
       await new Promise((resolve, reject) => {
-        img.onload = resolve;
-        img.onerror = reject;
+        img.onload = () => {
+          try {
+            // Add logo at top right corner
+            doc.addImage(img, 'PNG', pageWidth - 45, yPos - 5, 35, 35);
+            resolve();
+          } catch (err) {
+            console.log('Error adding logo to PDF:', err);
+            resolve(); // Continue even if logo fails
+          }
+        };
+        img.onerror = () => {
+          console.log('Logo failed to load, continuing without it');
+          resolve(); // Continue without logo
+        };
         img.src = logoUrl;
       });
-      
-      // Add logo at top right
-      doc.addImage(img, 'PNG', pageWidth - 40, yPos, 30, 30);
     } catch (error) {
-      console.log('Could not load company logo');
+      console.log('Could not load company logo:', error);
     }
   }
   
