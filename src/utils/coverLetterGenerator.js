@@ -1,7 +1,7 @@
 import { jsPDF } from 'jspdf';
 
 /**
- * Fetch company logo as base64 to avoid CORS issues
+ * Fetch company logo as base64 using CORS proxy to avoid CORS issues
  * @param {string} companyName - Name of the company
  * @returns {Promise<string|null>} - Base64 image data or null
  */
@@ -10,8 +10,11 @@ const fetchCompanyLogo = async (companyName) => {
     const domain = companyName.toLowerCase().replace(/\s+/g, '') + '.com';
     const logoUrl = `https://www.google.com/s2/favicons?domain=${domain}&sz=128`;
     
-    // Fetch the image
-    const response = await fetch(logoUrl);
+    // Use CORS proxy to fetch the image (allorigins.win is a free CORS proxy)
+    const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(logoUrl)}`;
+    
+    // Fetch the image through proxy
+    const response = await fetch(proxyUrl);
     if (!response.ok) {
       console.log('Logo fetch failed:', response.status);
       return null;
