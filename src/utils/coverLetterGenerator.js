@@ -1,38 +1,69 @@
 import { jsPDF } from 'jspdf';
 
 /**
- * Fetch company logo as base64 using CORS proxy to avoid CORS issues
+ * Fetch company logo as base64 using multiple sources with fallback
  * @param {string} companyName - Name of the company
  * @returns {Promise<string|null>} - Base64 image data or null
  */
 const fetchCompanyLogo = async (companyName) => {
-  try {
-    const domain = companyName.toLowerCase().replace(/\s+/g, '') + '.com';
-    const logoUrl = `https://www.google.com/s2/favicons?domain=${domain}&sz=128`;
+  const domain = companyName.toLowerCase().replace(/\s+/g, '').replace(/[^a-z0-9]/g, '') + '.com';
+  
+  // Multiple logo sources in order of quality (best first)
+  const logoSources = [
+    // 1. Clearbit Logo API (high quality, 128x128)
+    `https://logo.clearbit.com/${domain}`,
     
-    // Use CORS proxy to fetch the image (allorigins.win is a free CORS proxy)
-    const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(logoUrl)}`;
+    // 2. Logo.dev (high quality, free tier)
+    `https://img.logo.dev/${domain}?token=pk_X-NomkcxQgKZVIFDaar_ng`,
     
-    // Fetch the image through proxy
-    const response = await fetch(proxyUrl);
-    if (!response.ok) {
-      console.log('Logo fetch failed:', response.status);
-      return null;
+    // 3. Brandfetch API (good quality)
+    `https://cdn.brandfetch.io/${domain}/icon`,
+    
+    // 4. Google Favicon (fallback, lower quality but always works)
+    `https://www.google.com/s2/favicons?domain=${domain}&sz=128`
+  ];
+
+  // Try each source in order
+  for (let i = 0; i < logoSources.length; i++) {
+    try {
+      const logoUrl = logoSources[i];
+      console.log(`🔍 Trying logo source ${i + 1}/${logoSources.length}: ${logoUrl.split('?')[0]}`);
+      
+      // Use CORS proxy for all sources to avoid CORS issues
+      const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(logoUrl)}`;
+      
+      const response = await fetch(proxyUrl, { 
+        method: 'GET',
+        headers: { 'Accept': 'image/*' }
+      });
+      
+      if (response.ok && response.headers.get('content-type')?.includes('image')) {
+        // Convert to blob then to base64
+        const blob = await response.blob();
+        
+        // Check if blob is valid (not empty or error page)
+        if (blob.size > 100) { // Logos should be at least 100 bytes
+          const base64 = await new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onloadend = () => resolve(reader.result);
+            reader.onerror = reject;
+            reader.readAsDataURL(blob);
+          });
+          
+          console.log(`✅ Logo fetched successfully from source ${i + 1}`);
+          return base64;
+        }
+      }
+      
+      console.log(`❌ Source ${i + 1} failed, trying next...`);
+    } catch (error) {
+      console.log(`❌ Error with source ${i + 1}:`, error.message);
+      continue; // Try next source
     }
-    
-    // Convert to blob then to base64
-    const blob = await response.blob();
-    
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onloadend = () => resolve(reader.result);
-      reader.onerror = reject;
-      reader.readAsDataURL(blob);
-    });
-  } catch (error) {
-    console.log('Error fetching company logo:', error);
-    return null;
   }
+  
+  console.log('⚠️ All logo sources failed for', companyName);
+  return null;
 };
 
 /**
