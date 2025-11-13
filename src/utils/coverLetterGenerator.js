@@ -1,14 +1,35 @@
 import { jsPDF } from 'jspdf';
 
 /**
- * Fetch company logo using Google Favicon API
+ * Fetch company logo as base64 to avoid CORS issues
  * @param {string} companyName - Name of the company
- * @returns {string} - Logo URL
+ * @returns {Promise<string|null>} - Base64 image data or null
  */
-const fetchCompanyLogo = (companyName) => {
-  // Use Google's favicon service which is very reliable
-  const domain = companyName.toLowerCase().replace(/\s+/g, '') + '.com';
-  return `https://www.google.com/s2/favicons?domain=${domain}&sz=128`;
+const fetchCompanyLogo = async (companyName) => {
+  try {
+    const domain = companyName.toLowerCase().replace(/\s+/g, '') + '.com';
+    const logoUrl = `https://www.google.com/s2/favicons?domain=${domain}&sz=128`;
+    
+    // Fetch the image
+    const response = await fetch(logoUrl);
+    if (!response.ok) {
+      console.log('Logo fetch failed:', response.status);
+      return null;
+    }
+    
+    // Convert to blob then to base64
+    const blob = await response.blob();
+    
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onloadend = () => resolve(reader.result);
+      reader.onerror = reject;
+      reader.readAsDataURL(blob);
+    });
+  } catch (error) {
+    console.log('Error fetching company logo:', error);
+    return null;
+  }
 };
 
 /**
@@ -47,37 +68,20 @@ export const generateCoverLetter = async ({
   const pageHeight = doc.internal.pageSize.getHeight();
   let yPos = 20;
   
-  // Get company logo URL (Google Favicon API - always available)
-  const logoUrl = fetchCompanyLogo(companyName);
+  // Fetch company logo as base64 (to avoid CORS issues)
+  const logoBase64 = await fetchCompanyLogo(companyName);
   
   // ===== COMPANY LOGO =====
-  if (logoUrl) {
+  if (logoBase64) {
     try {
-      // Create image element and load logo
-      const img = new Image();
-      img.crossOrigin = 'anonymous';
-      
-      // Use async/await to ensure logo loads before continuing
-      await new Promise((resolve, reject) => {
-        img.onload = () => {
-          try {
-            // Add logo at top right corner
-            doc.addImage(img, 'PNG', pageWidth - 45, yPos - 5, 35, 35);
-            resolve();
-          } catch (err) {
-            console.log('Error adding logo to PDF:', err);
-            resolve(); // Continue even if logo fails
-          }
-        };
-        img.onerror = () => {
-          console.log('Logo failed to load, continuing without it');
-          resolve(); // Continue without logo
-        };
-        img.src = logoUrl;
-      });
+      // Add logo at top right corner (base64 format works directly with jsPDF)
+      doc.addImage(logoBase64, 'PNG', pageWidth - 45, yPos - 5, 35, 35);
+      console.log('✅ Company logo added successfully');
     } catch (error) {
-      console.log('Could not load company logo:', error);
+      console.log('Could not add company logo to PDF:', error);
     }
+  } else {
+    console.log('⚠️ No logo available for', companyName);
   }
   
   // ===== DATE =====
