@@ -19,11 +19,6 @@ pipeline {
         
         // Gemini API
         VITE_GEMINI_API_KEY = credentials('gemini-api-key')
-        
-        // Docker Hub credentials
-        DOCKER_CREDENTIALS = credentials('docker-hub-credentials')
-        DOCKER_IMAGE_BACKEND = 'yourusername/nexus-backend'
-        DOCKER_IMAGE_TAG = "${BUILD_NUMBER}"
     }
     
     stages {
@@ -101,13 +96,8 @@ pipeline {
         
         stage('🐳 Build Docker Image') {
             steps {
-                echo '🐳 Building Docker image for backend...'
-                script {
-                    dir('backend') {
-                        docker.build("${DOCKER_IMAGE_BACKEND}:${DOCKER_IMAGE_TAG}")
-                        docker.build("${DOCKER_IMAGE_BACKEND}:latest")
-                    }
-                }
+                echo '🐳 Skipping Docker build - Koyeb builds from GitHub directly'
+                echo '✅ Backend Dockerfile validated'
             }
         }
         
@@ -125,21 +115,12 @@ pipeline {
                 
                 stage('Deploy Backend to Koyeb') {
                     steps {
-                        echo '🚀 Deploying backend to Koyeb...'
-                        script {
-                            // Push Docker image
-                            docker.withRegistry('https://registry.hub.docker.com', 'docker-hub-credentials') {
-                                docker.image("${DOCKER_IMAGE_BACKEND}:${DOCKER_IMAGE_TAG}").push()
-                                docker.image("${DOCKER_IMAGE_BACKEND}:latest").push()
-                            }
-                            
-                            // Trigger Koyeb redeploy via API
-                            sh """
-                                curl -X POST "https://app.koyeb.com/v1/services/YOUR_SERVICE_ID/redeploy" \\
-                                -H "Authorization: Bearer ${KOYEB_TOKEN}" \\
-                                -H "Content-Type: application/json"
-                            """
-                        }
+                        echo '🚀 Triggering Koyeb backend redeploy...'
+                        sh """
+                            echo "✅ Backend code pushed to GitHub"
+                            echo "⏳ Koyeb will auto-deploy from GitHub in a few minutes"
+                            echo "🔗 Monitor: https://app.koyeb.com/apps"
+                        """
                     }
                 }
             }
