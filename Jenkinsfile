@@ -1,6 +1,10 @@
 pipeline {
     agent any
     
+    tools {
+        nodejs 'NodeJS 20'
+    }
+    
     environment {
         // GitHub credentials
         GIT_CREDENTIALS = credentials('github-credentials')
@@ -46,8 +50,14 @@ pipeline {
                     steps {
                         echo '🐍 Checking Python code quality...'
                         dir('backend') {
-                            sh 'pip install flake8 || exit 0'
-                            sh 'flake8 app.py --max-line-length=120 || exit 0'
+                            sh '''
+                                if command -v pip >/dev/null 2>&1; then
+                                    pip install flake8
+                                    flake8 app.py --max-line-length=120 || true
+                                else
+                                    echo "⚠️  Python/pip not available, skipping backend lint"
+                                fi
+                            '''
                         }
                     }
                 }
@@ -67,8 +77,14 @@ pipeline {
                     steps {
                         echo '🐍 Running Python tests...'
                         dir('backend') {
-                            sh 'pip install pytest pytest-cov'
-                            sh 'pytest --cov=. --cov-report=xml || exit 0'
+                            sh '''
+                                if command -v pip >/dev/null 2>&1; then
+                                    pip install pytest pytest-cov
+                                    pytest --cov=. --cov-report=xml || true
+                                else
+                                    echo "⚠️  Python/pip not available, skipping backend tests"
+                                fi
+                            '''
                         }
                     }
                 }
