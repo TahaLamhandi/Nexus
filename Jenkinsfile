@@ -37,10 +37,8 @@ pipeline {
                 stage('Frontend Lint') {
                     steps {
                         echo '🧹 Linting frontend code...'
-                        dir('frontend') {
-                            bat 'npm install'
-                            bat 'npm run lint || exit 0'
-                        }
+                        sh 'npm install'
+                        sh 'npm run lint || exit 0'
                     }
                 }
                 
@@ -48,8 +46,8 @@ pipeline {
                     steps {
                         echo '🐍 Checking Python code quality...'
                         dir('backend') {
-                            bat 'pip install flake8 || exit 0'
-                            bat 'flake8 app.py --max-line-length=120 || exit 0'
+                            sh 'pip install flake8 || exit 0'
+                            sh 'flake8 app.py --max-line-length=120 || exit 0'
                         }
                     }
                 }
@@ -61,9 +59,7 @@ pipeline {
                 stage('Frontend Tests') {
                     steps {
                         echo '⚛️ Running React tests...'
-                        dir('frontend') {
-                            bat 'npm test -- --watchAll=false || exit 0'
-                        }
+                        sh 'npm test -- --watchAll=false || exit 0'
                     }
                 }
                 
@@ -71,8 +67,8 @@ pipeline {
                     steps {
                         echo '🐍 Running Python tests...'
                         dir('backend') {
-                            bat 'pip install pytest pytest-cov'
-                            bat 'pytest --cov=. --cov-report=xml || exit 0'
+                            sh 'pip install pytest pytest-cov'
+                            sh 'pytest --cov=. --cov-report=xml || exit 0'
                         }
                     }
                 }
@@ -82,8 +78,8 @@ pipeline {
         stage('🏗️ Build Frontend') {
             steps {
                 echo '⚛️ Building React frontend...'
-                bat 'npm install'
-                bat 'npm run build'
+                sh 'npm install'
+                sh 'npm run build'
             }
         }
         
@@ -104,7 +100,7 @@ pipeline {
                 stage('Deploy Frontend to Vercel') {
                     steps {
                         echo '🌐 Deploying frontend to Vercel...'
-                        bat """
+                        sh """
                             npm install -g vercel
                             vercel --token ${VERCEL_TOKEN} --prod --yes
                         """
@@ -122,9 +118,9 @@ pipeline {
                             }
                             
                             // Trigger Koyeb redeploy via API
-                            bat """
-                                curl -X POST "https://app.koyeb.com/v1/services/YOUR_SERVICE_ID/redeploy" ^
-                                -H "Authorization: Bearer ${KOYEB_TOKEN}" ^
+                            sh """
+                                curl -X POST "https://app.koyeb.com/v1/services/YOUR_SERVICE_ID/redeploy" \\
+                                -H "Authorization: Bearer ${KOYEB_TOKEN}" \\
                                 -H "Content-Type: application/json"
                             """
                         }
@@ -138,12 +134,12 @@ pipeline {
                 echo '🏥 Running health checks...'
                 script {
                     // Check frontend
-                    bat """
+                    sh """
                         curl -f https://nexusai-iota.vercel.app/ || exit 1
                     """
                     
                     // Check backend
-                    bat """
+                    sh """
                         curl -f https://hissing-pierette-1tahaaaaa1-fff858c6.koyeb.app/ || exit 1
                     """
                 }
