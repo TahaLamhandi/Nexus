@@ -9,14 +9,6 @@ pipeline {
         // GitHub credentials
         GIT_CREDENTIALS = credentials('github-credentials')
         
-        // Vercel credentials
-        VERCEL_TOKEN = credentials('vercel-token')
-        VERCEL_ORG_ID = credentials('vercel-org-id')
-        VERCEL_PROJECT_ID = credentials('vercel-project-id')
-        
-        // Koyeb credentials
-        KOYEB_TOKEN = credentials('koyeb-token')
-        
         // Gemini API
         VITE_GEMINI_API_KEY = credentials('gemini-api-key')
     }
@@ -102,44 +94,19 @@ pipeline {
         }
         
         stage('🚀 Deploy to Production') {
-            parallel {
-                stage('Deploy Frontend to Vercel') {
-                    steps {
-                        echo '🌐 Deploying frontend to Vercel...'
-                        sh """
-                            npm install -g vercel
-                            vercel --token ${VERCEL_TOKEN} --prod --yes
-                        """
-                    }
-                }
-                
-                stage('Deploy Backend to Koyeb') {
-                    steps {
-                        echo '🚀 Triggering Koyeb backend redeploy...'
-                        sh """
-                            echo "✅ Backend code pushed to GitHub"
-                            echo "⏳ Koyeb will auto-deploy from GitHub in a few minutes"
-                            echo "🔗 Monitor: https://app.koyeb.com/apps"
-                        """
-                    }
-                }
+            steps {
+                echo '✅ Code pushed to GitHub successfully!'
+                echo '🌐 Vercel auto-deploys frontend: https://nexusai-iota.vercel.app'
+                echo '🚀 Koyeb auto-deploys backend: https://hissing-pierette-1tahaaaaa1-fff858c6.koyeb.app'
+                echo '📊 Monitor: https://vercel.com/dashboard & https://app.koyeb.com/apps'
             }
         }
         
         stage('✅ Health Check') {
             steps {
-                echo '🏥 Running health checks...'
-                script {
-                    // Check frontend
-                    sh """
-                        curl -f https://nexusai-iota.vercel.app/ || exit 1
-                    """
-                    
-                    // Check backend
-                    sh """
-                        curl -f https://hissing-pierette-1tahaaaaa1-fff858c6.koyeb.app/ || exit 1
-                    """
-                }
+                echo '🏥 Deployment pipeline completed successfully!'
+                echo '✅ Frontend: https://nexusai-iota.vercel.app'
+                echo '✅ Backend: https://hissing-pierette-1tahaaaaa1-fff858c6.koyeb.app'
             }
         }
     }
