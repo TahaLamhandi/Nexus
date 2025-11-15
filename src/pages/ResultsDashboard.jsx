@@ -195,7 +195,7 @@ const ResultsDashboard = () => {
             </h1>
           </div>
           <p className="text-gray-600 text-sm sm:text-base md:text-lg">
-            AI-powered insights using Locally Weighted Regression
+            Smart job matching tailored to your skills and experience
           </p>
         </motion.div>
 

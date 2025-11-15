@@ -1,15 +1,8 @@
 import { motion } from 'framer-motion';
-import { Sparkles, Github, Twitter, Linkedin, Mail } from 'lucide-react';
+import { Sparkles } from 'lucide-react';
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
-
-  const socialLinks = [
-    { icon: Github, href: '#', label: 'GitHub' },
-    { icon: Twitter, href: '#', label: 'Twitter' },
-    { icon: Linkedin, href: '#', label: 'LinkedIn' },
-    { icon: Mail, href: '#', label: 'Email' },
-  ];
 
   return (
     <footer className="relative mt-auto py-12 px-4 border-t border-gray-200/50 backdrop-blur-sm bg-white/40">
@@ -36,31 +29,6 @@ const Footer = () => {
           >
             Your intelligent career companion powered by AI
           </motion.p>
-
-          {/* Social Links */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.2 }}
-            className="flex items-center gap-4"
-          >
-            {socialLinks.map((social, index) => (
-              <motion.a
-                key={index}
-                href={social.href}
-                aria-label={social.label}
-                className="w-10 h-10 rounded-full bg-gray-100 hover:bg-gradient-to-r hover:from-primary-600 hover:to-secondary-600 flex items-center justify-center transition-all duration-300 group"
-                whileHover={{ scale: 1.1, rotate: 5 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                <social.icon 
-                  size={18} 
-                  className="text-gray-600 group-hover:text-white transition-colors" 
-                />
-              </motion.a>
-            ))}
-          </motion.div>
 
           {/* Divider */}
           <div className="w-full max-w-md h-px bg-gradient-to-r from-transparent via-gray-300 to-transparent" />
