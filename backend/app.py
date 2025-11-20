@@ -67,6 +67,8 @@ class CVAnalysisResponse(BaseModel):
     insights: Dict[str, Any]
 
 class HealthResponse(BaseModel):
+    model_config = {'protected_namespaces': ()}
+    
     status: str
     version: str
     ml_library: str
