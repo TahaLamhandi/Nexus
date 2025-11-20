@@ -669,122 +669,119 @@ const ResultsDashboard = () => {
                   >
                     <div className="h-full p-3 sm:p-6 rounded-xl bg-gradient-to-br from-primary-50 to-secondary-50 border-2 border-primary-200 hover:border-primary-400 hover:shadow-xl transition-all duration-300">
                       {/* Match Score Badge */}
-                      <div className="flex items-start justify-between mb-2 sm:mb-3">
-                        <div className="flex-1 flex items-start gap-2 sm:gap-3">
-                          {/* Company Logo - Real logos using Google favicon service */}
-                          <div 
+                      <div className="flex items-start gap-2 sm:gap-3 mb-2 sm:mb-3">
+                        {/* Company Logo - Real logos using Google favicon service */}
+                        <div 
+                          style={{ 
+                            width: '40px', 
+                            height: '40px',
+                            minWidth: '40px', 
+                            minHeight: '40px',
+                            backgroundColor: 'white',
+                            borderRadius: '8px',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            color: '#6366f1',
+                            fontSize: '16px',
+                            fontWeight: 'bold',
+                            flexShrink: 0,
+                            boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
+                            overflow: 'hidden',
+                            position: 'relative',
+                            border: '1px solid #e5e7eb'
+                          }}
+                        >
+                          {/* Fallback text - shows first 2 letters */}
+                          <span style={{ position: 'absolute', zIndex: 0, color: '#6366f1' }}>
+                            {(job.Company || 'C').split(' ').map(word => word.charAt(0)).join('').toUpperCase().slice(0, 2)}
+                          </span>
+                          {/* Google Favicon Service - no CORS issues, gets real company logos */}
+                          <img 
+                            src={`https://www.google.com/s2/favicons?domain=${(job.Company || '').toLowerCase().replace(/[\s-]+/g, '')}.com&sz=128`}
+                            alt={`${job.Company} logo`}
                             style={{ 
-                              width: '48px', 
-                              height: '48px',
-                              minWidth: '48px', 
-                              minHeight: '48px',
-                              backgroundColor: 'white',
-                              borderRadius: '8px',
-                              display: 'flex',
-                              alignItems: 'center',
-                              justifyContent: 'center',
-                              color: '#6366f1',
-                              fontSize: '18px',
-                              fontWeight: 'bold',
-                              flexShrink: 0,
-                              boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
-                              overflow: 'hidden',
-                              position: 'relative',
-                              border: '1px solid #e5e7eb'
+                              position: 'absolute',
+                              top: 0,
+                              left: 0,
+                              width: '100%', 
+                              height: '100%', 
+                              objectFit: 'contain',
+                              display: 'block',
+                              zIndex: 1,
+                              padding: '6px'
                             }}
-                          >
-                            {/* Fallback text - shows first 2 letters */}
-                            <span style={{ position: 'absolute', zIndex: 0, color: '#6366f1' }}>
-                              {(job.Company || 'C').split(' ').map(word => word.charAt(0)).join('').toUpperCase().slice(0, 2)}
-                            </span>
-                            {/* Google Favicon Service - no CORS issues, gets real company logos */}
-                            <img 
-                              src={`https://www.google.com/s2/favicons?domain=${(job.Company || '').toLowerCase().replace(/[\s-]+/g, '')}.com&sz=128`}
-                              alt={`${job.Company} logo`}
-                              style={{ 
-                                position: 'absolute',
-                                top: 0,
-                                left: 0,
-                                width: '100%', 
-                                height: '100%', 
-                                objectFit: 'contain',
-                                display: 'block',
-                                zIndex: 1,
-                                padding: '8px'
-                              }}
-                              onError={(e) => {
-                                // If fails, hide to show fallback initials
-                                e.target.style.display = 'none';
-                              }}
-                            />
-                          </div>
-                          <div className="flex-1 min-w-0">
-                            <h3 className="font-bold text-sm sm:text-lg text-gray-800 mb-1 group-hover:text-primary-700 transition-colors break-words line-clamp-2">
-                              {job.Job_Title || job.title || 'Position'}
-                            </h3>
-                            <div className="flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm text-gray-600 mb-1 sm:mb-2">
-                              <Building2 className="w-3 h-3 sm:w-4 sm:h-4 flex-shrink-0" />
-                              <span className="font-medium truncate">{job.Company || job.company || 'Company'}</span>
-                            </div>
+                            onError={(e) => {
+                              // If fails, hide to show fallback initials
+                              e.target.style.display = 'none';
+                            }}
+                          />
+                        </div>
+                        
+                        {/* Job Title & Company */}
+                        <div className="flex-1 min-w-0 pr-2">
+                          <h3 className="font-bold text-sm sm:text-base text-gray-800 mb-0.5 group-hover:text-primary-700 transition-colors line-clamp-2 leading-tight">
+                            {job.Job_Title || job.title || 'Position'}
+                          </h3>
+                          <div className="flex items-center gap-1 text-xs text-gray-600">
+                            <Building2 className="w-3 h-3 flex-shrink-0" />
+                            <span className="font-medium truncate">{job.Company || job.company || 'Company'}</span>
                           </div>
                         </div>
-                        <div className="ml-2 sm:ml-4 flex-shrink-0">
-                          <div className="flex flex-col items-center min-w-[50px] sm:min-w-[60px]">
-                            <div className="text-base sm:text-2xl font-bold text-primary-600 whitespace-nowrap">
-                              {typeof job.matchScore === 'number' ? job.matchScore.toFixed(2) : job.matchScore}%
-                            </div>
-                            <div className="text-xs text-gray-500 whitespace-nowrap">Match</div>
+                        
+                        {/* Match Score - Always stays right */}
+                        <div className="flex-shrink-0 flex flex-col items-center justify-center bg-primary-600 rounded-lg px-2 py-1 min-w-[52px]">
+                          <div className="text-lg sm:text-xl font-bold text-white leading-none">
+                            {typeof job.matchScore === 'number' ? job.matchScore.toFixed(0) : job.matchScore}%
                           </div>
+                          <div className="text-[9px] text-primary-100 uppercase tracking-wide mt-0.5">Match</div>
                         </div>
                       </div>
                       
-                      {/* Job Details */}
-                      <div className="space-y-1.5 sm:space-y-2 mb-3 sm:mb-4">
+                      {/* Job Details - Compact horizontal layout */}
+                      <div className="flex flex-wrap items-center gap-x-3 gap-y-1 mb-3 text-xs text-gray-600">
                         {job.Location && (
-                          <div className="flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm text-gray-600">
-                            <MapPin className="w-3.5 h-3.5 sm:w-[14px] sm:h-[14px] flex-shrink-0" />
-                            <span className="truncate">{job.Location}</span>
+                          <div className="flex items-center gap-1">
+                            <MapPin className="w-3 h-3 flex-shrink-0" />
+                            <span className="truncate max-w-[120px]">{job.Location}</span>
                           </div>
                         )}
                         {job.Work_Type && job.Work_Type !== 'Not specified' && (
-                          <div className="flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm text-gray-600">
-                            <Briefcase className="w-3.5 h-3.5 sm:w-[14px] sm:h-[14px] flex-shrink-0" />
-                            <span className="truncate">{job.Work_Type}</span>
+                          <div className="flex items-center gap-1">
+                            <Briefcase className="w-3 h-3 flex-shrink-0" />
+                            <span>{job.Work_Type}</span>
                           </div>
                         )}
                         {job.Experience_Level && (
-                          <div className="flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm text-gray-600">
-                            <Award className="w-3.5 h-3.5 sm:w-[14px] sm:h-[14px] flex-shrink-0" />
-                            <span className="truncate">{job.Experience_Level}</span>
+                          <div className="flex items-center gap-1">
+                            <Award className="w-3 h-3 flex-shrink-0" />
+                            <span>{job.Experience_Level}</span>
                           </div>
                         )}
                       </div>
                       
-                      {/* LinkedIn Link - Always visible */}
-                      <div className="mt-2">
-                        <a
-                          href={
-                            job.LinkedIn_URL && job.LinkedIn_URL.trim() !== '' && job.LinkedIn_URL !== 'nan'
-                              ? job.LinkedIn_URL
-                              : `https://www.linkedin.com/search/results/all/?keywords=${encodeURIComponent(job.Company || job.company || '')}`
-                          }
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          onClick={(e) => {
-                            const hasDirectURL = job.LinkedIn_URL && job.LinkedIn_URL.trim() !== '' && job.LinkedIn_URL !== 'nan';
-                            console.log(hasDirectURL ? '🔗 Opening job on LinkedIn:' : '🏢 Opening company search on LinkedIn:', hasDirectURL ? job.LinkedIn_URL : job.Company);
-                          }}
-                          className="inline-flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 bg-[#0A66C2] text-white rounded-lg hover:bg-[#004182] transition-colors text-xs sm:text-sm font-medium cursor-pointer"
-                        >
-                          <SiLinkedin className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-                          <span className="hidden sm:inline">
-                            {job.LinkedIn_URL && job.LinkedIn_URL.trim() !== '' && job.LinkedIn_URL !== 'nan' 
-                              ? 'View on LinkedIn' 
-                              : 'Find on LinkedIn'}
-                          </span>
-                          <span className="sm:hidden">LinkedIn</span>
-                        </a>
-                      </div>
+                      {/* LinkedIn Link - Compact button */}
+                      <a
+                        href={
+                          job.LinkedIn_URL && job.LinkedIn_URL.trim() !== '' && job.LinkedIn_URL !== 'nan'
+                            ? job.LinkedIn_URL
+                            : `https://www.linkedin.com/search/results/all/?keywords=${encodeURIComponent(job.Company || job.company || '')}`
+                        }
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        onClick={(e) => {
+                          const hasDirectURL = job.LinkedIn_URL && job.LinkedIn_URL.trim() !== '' && job.LinkedIn_URL !== 'nan';
+                          console.log(hasDirectURL ? '🔗 Opening job on LinkedIn:' : '🏢 Opening company search on LinkedIn:', hasDirectURL ? job.LinkedIn_URL : job.Company);
+                        }}
+                        className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-[#0A66C2] text-white rounded-lg hover:bg-[#004182] transition-colors text-xs font-medium cursor-pointer w-full justify-center"
+                      >
+                        <SiLinkedin className="w-3.5 h-3.5" />
+                        <span>
+                          {job.LinkedIn_URL && job.LinkedIn_URL.trim() !== '' && job.LinkedIn_URL !== 'nan' 
+                            ? 'View on LinkedIn' 
+                            : 'Find on LinkedIn'}
+                        </span>
+                      </a>
                     </div>
                   </motion.div>
                   );
